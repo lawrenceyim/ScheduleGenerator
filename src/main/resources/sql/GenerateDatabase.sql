@@ -18,11 +18,13 @@ CREATE TABLE StudentGroups (
   PRIMARY KEY(id)
 );
 
-CREATE TABLE Schedules (
+CREATE TABLE Classes (
+  id INT NOT NULL,
   group_id INT NOT NULL,
   subject_id INT NOT NULL,
   time_slot INT NOT NULL,
   day_of_week VARCHAR(20) NOT NULL,
+  PRIMARY KEY (id),
   FOREIGN KEY (group_id) REFERENCES StudentGroups(id),
   FOREIGN KEY(subject_id) REFERENCES Subjects(id)
 );
