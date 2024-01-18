@@ -5,14 +5,14 @@ public class Course {
     private long groupId;
     private long subjectId;
     private long timeSlot;
-    private String dayOfWeek;
+    private DayOfWeek dayOfWeek;
 
     public Course(long id, long groupId, long subjectId, long timeSlot, String dayOfWeek) {
         this.id = id;
         this.groupId = groupId;
         this.subjectId = subjectId;
         this.timeSlot = timeSlot;
-        this.dayOfWeek = dayOfWeek;
+        this.dayOfWeek = DayOfWeek.valueOf(dayOfWeek);
     }
 
     public long getId() {
@@ -47,11 +47,11 @@ public class Course {
         this.timeSlot = timeSlot;
     }
 
-    public String getDayOfWeek() {
+    public DayOfWeek getDayOfWeek() {
         return dayOfWeek;
     }
 
     public void setDayOfWeek(String dayOfWeek) {
-        this.dayOfWeek = dayOfWeek;
+        this.dayOfWeek = DayOfWeek.valueOf(dayOfWeek);
     }
 }

@@ -11,7 +11,7 @@
             subject_id,
             time_slot,
             day_of_week
-        FROM Courses
+        FROM courses
     </sql>
 
     <select id="findById" resultMap="CourseResultMap">
