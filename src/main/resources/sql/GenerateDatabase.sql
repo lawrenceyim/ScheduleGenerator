@@ -3,11 +3,20 @@ create database if not exists schedule_generator;
 
 use schedule_generator;
 
+CREATE TABLE teachers (
+  id serial,
+  first_name VARCHAR(45) NOT NULL,
+  last_name VARCHAR(45) NOT NULL,
+  PRIMARY KEY (id)
+);
+
 CREATE TABLE subjects (
   id serial,
   name VARCHAR(40) NOT NULL,
+  teacher_id BIGINT UNSIGNED UNIQUE NOT NULL,
   room INT NOT NULL,
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  FOREIGN KEY (teacher_id) REFERENCES teachers(id)
 );
 
 CREATE TABLE students (
@@ -34,10 +43,15 @@ CREATE TABLE classes (
   FOREIGN KEY(subject_id) REFERENCES subjects(id)
 );
 
-insert into subjects(name, room) values
-('Physics', 100),
-('Chemistry', 200),
-('Calculus', 100);
+insert into teachers(first_name, last_name) values
+('Ron', 'Swanson'),
+('Jim', 'Peters'),
+('Henry', 'Simmons');
+
+insert into subjects(name, teacher_id, room) values
+('Physics', 1, 100),
+('Chemistry', 2, 200),
+('Calculus', 3, 100);
 
 insert into student_groups(id) values
 (1),

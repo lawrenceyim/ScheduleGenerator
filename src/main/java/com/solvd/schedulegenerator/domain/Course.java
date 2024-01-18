@@ -1,16 +1,20 @@
 package com.solvd.schedulegenerator.domain;
 
+import com.solvd.schedulegenerator.persistence.SubjectDao;
+
 public class Course {
     private long id;
-    private long groupId;
-    private long subjectId;
+    private StudentGroup group;
+    private Subject subject;
     private long timeSlot;
     private DayOfWeek dayOfWeek;
 
-    public Course(long id, long groupId, long subjectId, long timeSlot, String dayOfWeek) {
+    public Course(){}
+
+    public Course(long id, StudentGroup group, Subject subject, long timeSlot, String dayOfWeek) {
         this.id = id;
-        this.groupId = groupId;
-        this.subjectId = subjectId;
+        this.group = group;
+        this.subject = subject;
         this.timeSlot = timeSlot;
         this.dayOfWeek = DayOfWeek.valueOf(dayOfWeek);
     }
@@ -23,20 +27,20 @@ public class Course {
         this.id = id;
     }
 
-    public long getGroupId() {
-        return groupId;
+    public StudentGroup getGroup() {
+        return group;
     }
 
-    public void setGroupId(long groupId) {
-        this.groupId = groupId;
+    public void setGroup(StudentGroup group) {
+        this.group = group;
     }
 
-    public long getSubjectId() {
-        return subjectId;
+    public Subject getSubject() {
+        return subject;
     }
 
-    public void setSubjectId(long subjectId) {
-        this.subjectId = subjectId;
+    public void setSubject(Subject subject) {
+        this.subject = subject;
     }
 
     public long getTimeSlot() {
@@ -53,5 +57,16 @@ public class Course {
 
     public void setDayOfWeek(String dayOfWeek) {
         this.dayOfWeek = DayOfWeek.valueOf(dayOfWeek);
+    }
+
+    @Override
+    public String toString() {
+        return "Course{" +
+                "id=" + id +
+                ", group=" + group +
+                ", subject=" + subject +
+                ", timeSlot=" + timeSlot +
+                ", dayOfWeek=" + dayOfWeek +
+                '}';
     }
 }
