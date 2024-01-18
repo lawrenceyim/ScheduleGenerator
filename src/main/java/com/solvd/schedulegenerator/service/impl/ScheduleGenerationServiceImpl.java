@@ -1,7 +1,6 @@
 package com.solvd.schedulegenerator.service.impl;
 
 import com.solvd.schedulegenerator.domain.Course;
-import com.solvd.schedulegenerator.domain.Student;
 import com.solvd.schedulegenerator.domain.StudentGroup;
 import com.solvd.schedulegenerator.domain.Subject;
 import com.solvd.schedulegenerator.service.ScheduleGenerationService;
@@ -14,7 +13,8 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
     private List<Course> courses;
     private int coursesPerDay; // No more than 5 per day
 
-    private ScheduleGenerationServiceImpl() {}
+    private ScheduleGenerationServiceImpl() {
+    }
 
     public static class Builder {
         private ScheduleGenerationServiceImpl scheduleGenerationService;
