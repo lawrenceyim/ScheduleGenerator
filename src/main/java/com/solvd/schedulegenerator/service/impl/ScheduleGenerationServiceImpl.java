@@ -6,14 +6,12 @@ import com.solvd.schedulegenerator.domain.Subject;
 import com.solvd.schedulegenerator.service.ScheduleGenerationService;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
 public class ScheduleGenerationServiceImpl implements ScheduleGenerationService {
     private List<StudentGroup> groups;
     private List<Subject> subjects;
-    private List<Course> courses;
     private List<Course> coursesWithConstraint;
     private int coursesPerDay;          // No more than 5 per day
     private final int DAYS_PER_WEEK = 5;
@@ -78,7 +76,7 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
         }
     }
 
-    public boolean depthFirstSearch(int group) {
+    private boolean depthFirstSearch(int group) {
         // Base case
         if (coursesAdded == totalCourses) {
             return true;
@@ -116,7 +114,7 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
     }
 
     // TODO: Add logic to check for room repetition instead of just class
-    public boolean hasNoConflict(int group, int day, int timeslot) {
+    private boolean hasNoConflict(int group, int day, int timeslot) {
         for (int i = 0; i < group; i++) {
             if (schedule[i][day][timeslot] == schedule[group][day][timeslot]) {
                 schedule[group][day][timeslot] = null;
@@ -126,7 +124,7 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
         return true;
     }
 
-    public List<Course> convertScheduleToCourses() {
+    private List<Course> convertScheduleToCourses() {
         List<Course> courses = new ArrayList<>();
         IntStream.range(0, groups.size()).forEach(group -> {
             IntStream.range(0, DAYS_PER_WEEK).forEach(day -> {
