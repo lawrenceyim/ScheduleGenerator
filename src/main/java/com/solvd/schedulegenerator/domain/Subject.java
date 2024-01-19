@@ -5,12 +5,6 @@ public class Subject {
     private long roomId;
     private String name;
 
-    public Subject(long id, long roomId, String name) {
-        this.id = id;
-        this.roomId = roomId;
-        this.name = name;
-    }
-
     public long getId() {
         return id;
     }

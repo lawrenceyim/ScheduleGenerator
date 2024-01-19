@@ -7,14 +7,6 @@ public class Course {
     private long timeSlot;
     private String dayOfWeek;
 
-    public Course(long id, long groupId, long subjectId, long timeSlot, String dayOfWeek) {
-        this.id = id;
-        this.groupId = groupId;
-        this.subjectId = subjectId;
-        this.timeSlot = timeSlot;
-        this.dayOfWeek = dayOfWeek;
-    }
-
     public long getId() {
         return id;
     }

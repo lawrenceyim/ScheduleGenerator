@@ -6,13 +6,6 @@ public class Student {
     private String lastName;
     private long groupId;
 
-    public Student(long id, String firstName, String lastName, long groupId) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.groupId = groupId;
-    }
-
     public long getId() {
         return id;
     }

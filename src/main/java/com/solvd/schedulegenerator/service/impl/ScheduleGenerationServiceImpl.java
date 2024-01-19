@@ -6,14 +6,17 @@ import com.solvd.schedulegenerator.domain.Subject;
 import com.solvd.schedulegenerator.service.ScheduleGenerationService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class ScheduleGenerationServiceImpl implements ScheduleGenerationService {
     private List<StudentGroup> groups;
     private List<Subject> subjects;
     private List<Course> courses;
+    private List<Course> coursesWithConstraint;
     private int coursesPerDay;          // No more than 5 per day
-    private int schoolDaysPerWeek = 5;  // 5 days is default
+    private final int DAYS_PER_WEEK = 5;
     private Subject[][][] schedule;     // [group][day of the week][timeslot]
     private int subjectIterator = 0;
     private int coursesAdded = 0;
@@ -44,8 +47,8 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
             return this;
         }
 
-        public Builder setSchoolDaysPerWeek(int schoolDaysPerWeek) {
-            scheduleGenerationService.schoolDaysPerWeek = schoolDaysPerWeek;
+        public Builder setCoursesWithConstraints(List<Course> coursesWithConstraints) {
+            scheduleGenerationService.coursesWithConstraint = coursesWithConstraints;
             return this;
         }
 
@@ -53,11 +56,11 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
             scheduleGenerationService.coursesPerDay = coursesPerDay;
             scheduleGenerationService.schedule = new Subject
                     [scheduleGenerationService.groups.size()]
-                    [scheduleGenerationService.schoolDaysPerWeek]
+                    [scheduleGenerationService.DAYS_PER_WEEK]
                     [scheduleGenerationService.coursesPerDay];
             scheduleGenerationService.totalCourses =
                     scheduleGenerationService.coursesPerDay *
-                            scheduleGenerationService.schoolDaysPerWeek;
+                            scheduleGenerationService.DAYS_PER_WEEK;
             return this;
         }
 
@@ -66,38 +69,53 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
         }
     }
 
-
-    // Add values with constraint first
-    // Then add values with no constraints
-    // After list of values is exhausted, restart from beginning of the list
     @Override
     public List<Course> generateSchedule() {
-        while (coursesAdded < totalCourses) {
-            for (int i = 0; i < groups.size(); i++) {
-                boolean courseAdded = false;
-                for (int j = 0; j < schoolDaysPerWeek; j++) {
-                    for (int k = 0; k < coursesPerDay; k++) {
-                        if (schedule[i][j][k] == null) {
-                            schedule[i][j][k] = subjects.get(subjectIterator);
-                            if (!hasNoConflict(i, j, k)) {
-                                courseAdded = true;
-                                break;
-                            } else {
-                                schedule[i][j][k] = null;
-                            }
+        if (depthFirstSearch(0)) {
+            return convertScheduleToCourses();
+        } else {
+            throw new RuntimeException("Valid schedule could not be formed.");
+        }
+    }
+
+    public boolean depthFirstSearch(int group) {
+        // Base case
+        if (coursesAdded == totalCourses) {
+            return true;
+        }
+
+        for (int day = 0; day < DAYS_PER_WEEK; day++) {
+            for (int timeslot = 0; timeslot < coursesPerDay; timeslot++) {
+                if (schedule[group][day][timeslot] == null) {
+                    schedule[group][day][timeslot] = subjects.get(subjectIterator);
+                    if (hasNoConflict(group, day, timeslot)) {
+                        group++;
+                        if (group == groups.size()) {
+                            coursesAdded++;
+                            group = 0;
+                            subjectIterator = (subjectIterator + 1) % subjects.size();
                         }
-                    }
-                    if (courseAdded) {
-                        break;
+                        // If solution is invalid, back track
+                        if (!depthFirstSearch(group)) {
+                            subjectIterator--;
+                            if (subjectIterator < 0) {
+                                subjectIterator = subjects.size() - 1;
+                            }
+                            group--;
+                            if (group < 0) {
+                                group = groups.size() - 1;
+                            }
+                        } else {
+                            return true;
+                        }
                     }
                 }
             }
-            subjectIterator = (subjectIterator + 1) % courses.size();
-            coursesAdded++;
         }
-        return null;
+        return false;
     }
 
+    // TODO: Add logic to check for room repetition instead of just class
     public boolean hasNoConflict(int group, int day, int timeslot) {
         for (int i = 0; i < group; i++) {
             if (schedule[i][day][timeslot] == schedule[group][day][timeslot]) {
@@ -110,14 +128,35 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
 
     public List<Course> convertScheduleToCourses() {
         List<Course> courses = new ArrayList<>();
-        // TODO
+        IntStream.range(0, groups.size()).forEach(group -> {
+            IntStream.range(0, DAYS_PER_WEEK).forEach(day -> {
+                IntStream.range(0, coursesPerDay).forEach(timeslot -> {
+                    Course course = new Course();
+                    course.setGroupId(groups.get(group).getId());
+                    course.setSubjectId(schedule[group][day][timeslot].getId());
+                    course.setTimeSlot(timeslot);
+                    course.setDayOfWeek(getNameOfDay(day));
+                    courses.add(course);
+                });
+            });
+        });
         return courses;
     }
 
-    // Testing purposes only
-    public static void main(String[] args) {
-        ScheduleGenerationService s = new ScheduleGenerationServiceImpl.Builder()
-
-                .build();
+    private String getNameOfDay(int day) {
+        switch (day) {
+            case 1:
+                return "Monday";
+            case 2:
+                return "Tuesday";
+            case 3:
+                return "Wednesday";
+            case 4:
+                return "Thursday";
+            case 5:
+                return "Friday";
+            default:
+                throw new RuntimeException("Invalid day of the week.");
+        }
     }
 }
