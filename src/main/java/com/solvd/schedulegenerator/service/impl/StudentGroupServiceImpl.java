@@ -25,5 +25,4 @@ public class StudentGroupServiceImpl implements BaseService<StudentGroup> {
             return studentGroupDao.findAll();
         }
     }
-    // Implement other methods as needed
 }
