@@ -1,4 +1,7 @@
 package com.solvd.schedulegenerator.persistence;
 
-public interface CourseDao extends BaseDao {
+import com.solvd.schedulegenerator.domain.Course;
+
+public interface CourseDao extends BaseDao<Course> {
+    void create(Course course);
 }

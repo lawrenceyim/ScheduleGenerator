@@ -1,5 +1,7 @@
 package com.solvd.schedulegenerator.persistence;
 
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 import java.util.Optional;
 

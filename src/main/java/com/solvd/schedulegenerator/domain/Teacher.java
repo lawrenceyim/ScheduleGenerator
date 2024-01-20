@@ -1,25 +1,25 @@
 package com.solvd.schedulegenerator.domain;
 
-public class Student {
-    private Long id;
+import com.solvd.schedulegenerator.persistence.TeacherDao;
+
+public class Teacher {
+    private long id;
     private String firstName;
     private String lastName;
-    private StudentGroup group;
 
-    public Student(){}
+    public Teacher(){}
 
-    public Student(Long id, String firstName, String lastName, StudentGroup group) {
+    public Teacher(long id, String firstName, String lastName) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.group = group;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -39,11 +39,12 @@ public class Student {
         this.lastName = lastName;
     }
 
-    public StudentGroup getGroup() {
-        return group;
-    }
-
-    public void setGroup(StudentGroup group) {
-        this.group = group;
+    @Override
+    public String toString() {
+        return "Teacher{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                '}';
     }
 }

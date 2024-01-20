@@ -13,6 +13,8 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
     private List<Course> courses;
     private int coursesPerDay; // No more than 5 per day
 
+
+
     private ScheduleGenerationServiceImpl() {
     }
 

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.solvd.schedulegenerator.persistence.StudentDao">
+    <sql id="studentSelect">
+        SELECT
+        id as student_id,
+        first_name as student_first_name,
+        last_name as student_last_name,
+        group_id as student_group_id
+        FROM students
+    </sql>
+
+    <select id="findById" resultMap="StudentResultMap">
+        <include refid="studentSelect"/>
+        WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="StudentResultMap">
+        <include refid="studentSelect"/>
+    </select>
+
+    <resultMap id="StudentResultMap" type="com.solvd.schedulegenerator.domain.Student" autoMapping="false">
+        <id column="student_id" property="id"/>
+        <result column="student_first_name" property="firstName"/>
+        <result column="student_last_name" property="lastName"/>
+        <result column="student_group_id" property="group"/>
+    </resultMap>
+</mapper>
