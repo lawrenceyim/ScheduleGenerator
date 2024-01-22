@@ -1,7 +1,6 @@
 package com.solvd.schedulegenerator.service.impl;
 
 import com.solvd.schedulegenerator.domain.Teacher;
-import com.solvd.schedulegenerator.persistence.CourseDao;
 import com.solvd.schedulegenerator.persistence.TeacherDao;
 import com.solvd.schedulegenerator.service.TeacherService;
 import com.solvd.schedulegenerator.utils.MyBatisSessionFactory;

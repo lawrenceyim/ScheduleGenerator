@@ -6,17 +6,23 @@
 <mapper namespace="com.solvd.schedulegenerator.persistence.CourseDao">
     <sql id="courseSelect">
         SELECT
-            id,
-            group_id,
-            subject_id,
-            time_slot,
-            day_of_week
-        FROM courses
+        c.id as id,
+        s.id as subject_id, s.name as subject_name,
+        t.id as teacher_id, t.first_name as teacher_first_name, t.last_name as teacher_last_name,
+        r.id as room_id, r.building as room_building, r.floor as room_floor, r.room_number as room_room_number,
+        g.id as group_id,
+        st.id as student_id, st.first_name as student_first_name, st.last_name as student_last_name
+        FROM courses c
+        LEFT JOIN subjects s on c.subject_id=s.id
+        LEFT JOIN teachers t on c.teacher_id=t.id
+        LEFT JOIN rooms r on c.room_id=r.id
+        LEFT JOIN student_groups g on c.group_id=g.id
+        LEFT JOIN students st on g.id=st.group_id
     </sql>
 
     <select id="findById" resultMap="CourseResultMap">
         <include refid="courseSelect"/>
-        WHERE id = #{id}
+        WHERE c.id = #{id}
     </select>
 
     <select id="findAll" resultMap="CourseResultMap">
@@ -25,9 +31,16 @@
 
     <resultMap id="CourseResultMap" type="com.solvd.schedulegenerator.domain.Course" autoMapping="false">
         <id column="id" property="id"/>
-        <result column="group_id" property="groupID"/>
-        <result column="subject_id" property="subjectId"/>
-        <result column="time_slot" property="timeSlot"/>
-        <result column="day_of_week" property="dayOfWeek"/>
+        <association property="subject" columnPrefix="subject_"
+                     resultMap="com.solvd.schedulegenerator.persistence.SubjectDao.SubjectResultMap"/>
+        <association property="teacher" columnPrefix="teacher_"
+                     resultMap="com.solvd.schedulegenerator.persistence.TeacherDao.TeacherResultMap"/>
+        <association property="room" columnPrefix="room_"
+                     resultMap="com.solvd.schedulegenerator.persistence.RoomDao.RoomResultMap"/>
+        <association property="group" columnPrefix="group_"
+                     resultMap="com.solvd.schedulegenerator.persistence.StudentGroupDao.StudentGroupResultMap">
+                <collection property="student" columnPrefix="student_"
+                             resultMap="com.solvd.schedulegenerator.persistence.StudentDao.StudentResultMap"/>
+        </association>
     </resultMap>
 </mapper>

@@ -5,15 +5,13 @@
 <mapper namespace="com.solvd.schedulegenerator.persistence.SubjectDao">
     <sql id="subjectSelect">
         SELECT
-        s.id as subject_id, s.name as subject_name, s.room as subject_room,
-        t.id as teacher_id, t.first_name as teacher_first_name, t.last_name as teacher_last_name
-        FROM subjects s
-        LEFT JOIN teachers t ON s.teacher_id=t.id
+        id, name
+        FROM subjects
     </sql>
 
     <select id="findById" resultMap="SubjectResultMap">
         <include refid="subjectSelect"/>
-        WHERE s.id = #{id}
+        WHERE id = #{id}
     </select>
 
     <select id="findAll" resultMap="SubjectResultMap">
@@ -21,10 +19,7 @@
     </select>
 
     <resultMap id="SubjectResultMap" type="com.solvd.schedulegenerator.domain.Subject" autoMapping="false">
-        <id column="subject_id" property="id"/>
-        <result column="subject_name" property="name"/>
-        <result column="subject_room" property="roomId"/>
-        <association property="teacher" columnPrefix="teacher_"
-                     resultMap="com.solvd.schedulegenerator.persistence.TeacherDao.TeacherResultMap"/>
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
     </resultMap>
 </mapper>

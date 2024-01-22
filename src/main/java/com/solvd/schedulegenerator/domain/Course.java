@@ -59,4 +59,15 @@ public class Course {
     public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
     }
+
+    @Override
+    public String toString() {
+        return "Course{" +
+                "id=" + id +
+                ", group=" + group +
+                ", subject=" + subject +
+                ", room=" + room +
+                ", teacher=" + teacher +
+                '}';
+    }
 }

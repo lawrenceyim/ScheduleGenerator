@@ -4,15 +4,13 @@ public class Student {
     private long id;
     private String firstName;
     private String lastName;
-    private StudentGroup group;
 
     public Student(){}
 
-    public Student(long id, String firstName, String lastName, StudentGroup group) {
+    public Student(long id, String firstName, String lastName) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.group = group;
     }
 
     public long getId() {
@@ -39,11 +37,12 @@ public class Student {
         this.lastName = lastName;
     }
 
-    public StudentGroup getGroup() {
-        return group;
-    }
-
-    public void setGroup(StudentGroup group) {
-        this.group = group;
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                '}';
     }
 }
