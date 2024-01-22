@@ -3,20 +3,21 @@ package com.solvd.schedulegenerator.domain;
 import com.solvd.schedulegenerator.persistence.SubjectDao;
 
 public class Course {
+
     private long id;
     private StudentGroup group;
     private Subject subject;
-    private long timeSlot;
-    private DayOfWeek dayOfWeek;
+    private Room room;
+    private Teacher teacher;
 
     public Course(){}
 
-    public Course(long id, StudentGroup group, Subject subject, long timeSlot, String dayOfWeek) {
+    public Course(long id, StudentGroup group, Subject subject, Room room, Teacher teacher) {
         this.id = id;
         this.group = group;
         this.subject = subject;
-        this.timeSlot = timeSlot;
-        this.dayOfWeek = DayOfWeek.valueOf(dayOfWeek);
+        this.room = room;
+        this.teacher = teacher;
     }
 
     public long getId() {
@@ -43,30 +44,19 @@ public class Course {
         this.subject = subject;
     }
 
-    public long getTimeSlot() {
-        return timeSlot;
+    public Room getRoom() {
+        return room;
     }
 
-    public void setTimeSlot(long timeSlot) {
-        this.timeSlot = timeSlot;
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
-    public DayOfWeek getDayOfWeek() {
-        return dayOfWeek;
+    public Teacher getTeacher() {
+        return teacher;
     }
 
-    public void setDayOfWeek(String dayOfWeek) {
-        this.dayOfWeek = DayOfWeek.valueOf(dayOfWeek);
-    }
-
-    @Override
-    public String toString() {
-        return "Course{" +
-                "id=" + id +
-                ", group=" + group +
-                ", subject=" + subject +
-                ", timeSlot=" + timeSlot +
-                ", dayOfWeek=" + dayOfWeek +
-                '}';
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
     }
 }

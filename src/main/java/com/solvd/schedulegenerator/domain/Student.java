@@ -1,25 +1,25 @@
 package com.solvd.schedulegenerator.domain;
 
 public class Student {
-    private Long id;
+    private long id;
     private String firstName;
     private String lastName;
     private StudentGroup group;
 
     public Student(){}
 
-    public Student(Long id, String firstName, String lastName, StudentGroup group) {
+    public Student(long id, String firstName, String lastName, StudentGroup group) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.group = group;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
