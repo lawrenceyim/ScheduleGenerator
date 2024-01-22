@@ -40,11 +40,6 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
             return this;
         }
 
-        public Builder setCourses(List<Course> courses) {
-            scheduleGenerationService.courses = courses;
-            return this;
-        }
-
         public Builder setCoursesWithConstraints(List<Course> coursesWithConstraints) {
             scheduleGenerationService.coursesWithConstraint = coursesWithConstraints;
             return this;
@@ -76,6 +71,7 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
         }
     }
 
+    // TODO: Add iterative deepening to minimize number of rooms and unique classes
     private boolean depthFirstSearch(int group) {
         // Base case
         if (coursesAdded == totalCourses) {
