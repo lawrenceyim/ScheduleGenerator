@@ -1,5 +1,7 @@
 package com.solvd.schedulegenerator.domain;
 
+import java.util.Arrays;
+
 public enum DayOfWeek {
 
     MONDAY("Monday", 1),
@@ -18,4 +20,7 @@ public enum DayOfWeek {
         this.number = number;
     }
 
+    public static DayOfWeek valueOf(int value){
+        return Arrays.stream(values()).filter((dayOfWeek) -> dayOfWeek.number == value).findFirst().orElse(null);
+    }
 }

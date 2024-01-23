@@ -11,7 +11,7 @@ import java.util.List;
 
 public class App {
 
-    private static BaseService service = new CourseServiceImpl();
+    private static BaseService service = new ScheduleServiceImpl();
 
     public static void main(String[] args){
         System.out.println(service.findById(2));

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.solvd.schedulegenerator.persistence.ScheduleDao">
+    <sql id="scheduleSelect">
+        SELECT
+        sc.id as id, sc.time_slot, sc.day_of_week,
+        c.id as course_id,
+        s.id as subject_id, s.name as subject_name,
+        t.id as teacher_id, t.first_name as teacher_first_name, t.last_name as teacher_last_name,
+        r.id as room_id, r.building as room_building, r.floor as room_floor, r.room_number as room_room_number,
+        g.id as group_id,
+        st.id as student_id, st.first_name as student_first_name, st.last_name as student_last_name
+        FROM schedules sc
+        LEFT JOIN courses c on sc.course_id=c.id
+        LEFT JOIN subjects s on c.subject_id=s.id
+        LEFT JOIN teachers t on c.teacher_id=t.id
+        LEFT JOIN rooms r on c.room_id=r.id
+        LEFT JOIN student_groups g on c.group_id=g.id
+        LEFT JOIN students st on g.id=st.group_id
+    </sql>
+
+    <select id="findById" resultMap="ScheduleResultMap">
+        <include refid="scheduleSelect"/>
+        WHERE sc.id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="ScheduleResultMap">
+        <include refid="scheduleSelect"/>
+    </select>
+
+    <resultMap id="ScheduleResultMap" type="com.solvd.schedulegenerator.domain.Schedule" autoMapping="false">
+        <id column="id" property="id"/>
+        <result column="time_slot" property="timeSlot"/>
+        <result column="day_of_week" property="dayOfWeek" typeHandler="com.solvd.schedulegenerator.utils.DayOfWeekTypeHandler"/>
+        <association property="course" columnPrefix="course_"
+                     resultMap="com.solvd.schedulegenerator.persistence.CourseDao.CourseResultMap"/>
+    </resultMap>
+</mapper>

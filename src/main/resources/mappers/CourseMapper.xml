@@ -39,8 +39,6 @@
                      resultMap="com.solvd.schedulegenerator.persistence.RoomDao.RoomResultMap"/>
         <association property="group" columnPrefix="group_"
                      resultMap="com.solvd.schedulegenerator.persistence.StudentGroupDao.StudentGroupResultMap">
-                <collection property="student" columnPrefix="student_"
-                             resultMap="com.solvd.schedulegenerator.persistence.StudentDao.StudentResultMap"/>
         </association>
     </resultMap>
 </mapper>

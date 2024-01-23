@@ -39,6 +39,9 @@ public class Schedule {
     public void setDayOfWeek(DayOfWeek dayOfWeek) {
         this.dayOfWeek = dayOfWeek;
     }
+    public void setDayOfWeek(int dayOfWeek){
+        this.dayOfWeek = DayOfWeek.valueOf(dayOfWeek);
+    }
 
     public short getTimeSlot() {
         return timeSlot;
