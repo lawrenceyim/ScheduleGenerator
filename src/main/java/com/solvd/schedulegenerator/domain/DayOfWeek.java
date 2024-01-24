@@ -15,12 +15,12 @@ public enum DayOfWeek {
     private String displayName;
     private int number;
 
-    DayOfWeek(String displayName, int number){
+    DayOfWeek(String displayName, int number) {
         this.displayName = displayName;
         this.number = number;
     }
 
-    public static DayOfWeek valueOf(int value){
+    public static DayOfWeek valueOf(int value) {
         return Arrays.stream(values()).filter((dayOfWeek) -> dayOfWeek.number == value).findFirst().orElse(null);
     }
 }

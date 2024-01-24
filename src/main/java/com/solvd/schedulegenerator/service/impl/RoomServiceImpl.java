@@ -12,7 +12,7 @@ import java.util.Optional;
 public class RoomServiceImpl implements RoomService {
     @Override
     public Optional<Room> findById(long id) {
-        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()){
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
             RoomDao roomDao = sqlSession.getMapper(RoomDao.class);
             return roomDao.findById(id);
         }
@@ -20,7 +20,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public List<Room> findAll() {
-        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()){
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
             RoomDao roomDao = sqlSession.getMapper(RoomDao.class);
             return roomDao.findAll();
         }

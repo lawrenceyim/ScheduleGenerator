@@ -1,13 +1,12 @@
 package com.solvd.schedulegenerator.domain;
 
-import com.solvd.schedulegenerator.persistence.TeacherDao;
-
 public class Teacher {
     private long id;
     private String firstName;
     private String lastName;
 
-    public Teacher(){}
+    public Teacher() {
+    }
 
     public Teacher(long id, String firstName, String lastName) {
         this.id = id;

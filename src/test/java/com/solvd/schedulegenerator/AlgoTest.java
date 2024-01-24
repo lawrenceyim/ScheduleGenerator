@@ -74,8 +74,18 @@ public class AlgoTest {
         return subjects;
     }
 
-    // TODO
-    private void printSchedule(List<Course> schedule ) {
-
+    private void printSchedule(List<Course> schedule) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%-30s%-30s%-30s%-30s", "Group", "Subject", "Room", "Teacher"));
+        sb.append(System.lineSeparator());
+        schedule.forEach(course -> {
+            sb.append(String.format("%-30s%-30s%-30s%-30s",
+                    course.getGroup(),
+                    course.getSubject(),
+                    course.getRoom(),
+                    course.getTeacher()));
+            sb.append(System.lineSeparator());
+        });
+        OUTPUT_LOGGER.info(sb.toString());
     }
 }

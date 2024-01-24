@@ -12,7 +12,7 @@ import java.util.Optional;
 public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public Optional<Schedule> findById(long id) {
-        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()){
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
             ScheduleDao scheduleDao = sqlSession.getMapper(ScheduleDao.class);
             return scheduleDao.findById(id);
         }
@@ -20,7 +20,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<Schedule> findAll() {
-        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()){
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
             ScheduleDao scheduleDao = sqlSession.getMapper(ScheduleDao.class);
             return scheduleDao.findAll();
         }

@@ -1,11 +1,11 @@
 package com.solvd.schedulegenerator.domain;
 
-import java.rmi.StubNotFoundException;
-
 public class Subject {
     private long id;
     private String name;
-    public Subject(){}
+
+    public Subject() {
+    }
 
     public Subject(long id, String name) {
         this.id = id;

@@ -17,7 +17,7 @@ public class DayOfWeekTypeHandler implements TypeHandler<DayOfWeek> {
 
     @Override
     public DayOfWeek getResult(ResultSet rs, String columnName) throws SQLException {
-        if (rs.next()){
+        if (rs.next()) {
             int num = rs.getInt(columnName);
             return DayOfWeek.valueOf(num);
         }

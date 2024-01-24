@@ -12,7 +12,7 @@ import java.util.Optional;
 public class SubjectServiceImpl implements SubjectService {
     @Override
     public Optional<Subject> findById(long id) {
-        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()){
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
             SubjectDao subjectDao = sqlSession.getMapper(SubjectDao.class);
             return subjectDao.findById(id);
         }
@@ -20,7 +20,7 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public List<Subject> findAll() {
-        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()){
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
             SubjectDao subjectDao = sqlSession.getMapper(SubjectDao.class);
             return subjectDao.findAll();
         }

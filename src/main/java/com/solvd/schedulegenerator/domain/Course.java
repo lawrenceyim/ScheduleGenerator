@@ -7,7 +7,8 @@ public class Course {
     private Room room;
     private Teacher teacher;
 
-    public Course(){}
+    public Course() {
+    }
 
     public Course(long id, StudentGroup group, Subject subject, Room room, Teacher teacher) {
         this.id = id;

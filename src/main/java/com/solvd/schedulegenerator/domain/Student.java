@@ -4,7 +4,9 @@ public class Student {
     private long id;
     private String firstName;
     private String lastName;
-    public Student(){}
+
+    public Student() {
+    }
 
     public Student(long id, String firstName, String lastName) {
         this.id = id;
