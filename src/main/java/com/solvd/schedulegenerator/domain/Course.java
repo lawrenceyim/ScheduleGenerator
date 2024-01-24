@@ -2,10 +2,20 @@ package com.solvd.schedulegenerator.domain;
 
 public class Course {
     private long id;
-    private long groupId;
-    private long subjectId;
-    private long timeSlot;
-    private String dayOfWeek;
+    private StudentGroup group;
+    private Subject subject;
+    private Room room;
+    private Teacher teacher;
+
+    public Course(){}
+
+    public Course(long id, StudentGroup group, Subject subject, Room room, Teacher teacher) {
+        this.id = id;
+        this.group = group;
+        this.subject = subject;
+        this.room = room;
+        this.teacher = teacher;
+    }
 
     public long getId() {
         return id;
@@ -15,35 +25,46 @@ public class Course {
         this.id = id;
     }
 
-    public long getGroupId() {
-        return groupId;
+    public StudentGroup getGroup() {
+        return group;
     }
 
-    public void setGroupId(long groupId) {
-        this.groupId = groupId;
+    public void setGroup(StudentGroup group) {
+        this.group = group;
     }
 
-    public long getSubjectId() {
-        return subjectId;
+    public Subject getSubject() {
+        return subject;
     }
 
-    public void setSubjectId(long subjectId) {
-        this.subjectId = subjectId;
+    public void setSubject(Subject subject) {
+        this.subject = subject;
     }
 
-    public long getTimeSlot() {
-        return timeSlot;
+    public Room getRoom() {
+        return room;
     }
 
-    public void setTimeSlot(long timeSlot) {
-        this.timeSlot = timeSlot;
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
-    public String getDayOfWeek() {
-        return dayOfWeek;
+    public Teacher getTeacher() {
+        return teacher;
     }
 
-    public void setDayOfWeek(String dayOfWeek) {
-        this.dayOfWeek = dayOfWeek;
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
+    }
+
+    @Override
+    public String toString() {
+        return "Course{" +
+                "id=" + id +
+                ", group=" + group +
+                ", subject=" + subject +
+                ", room=" + room +
+                ", teacher=" + teacher +
+                '}';
     }
 }

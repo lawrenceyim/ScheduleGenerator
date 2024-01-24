@@ -1,12 +1,15 @@
 package com.solvd.schedulegenerator.domain;
 
-public class Student {
+import com.solvd.schedulegenerator.persistence.TeacherDao;
+
+public class Teacher {
     private long id;
     private String firstName;
     private String lastName;
-    public Student(){}
 
-    public Student(long id, String firstName, String lastName) {
+    public Teacher(){}
+
+    public Teacher(long id, String firstName, String lastName) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -38,7 +41,7 @@ public class Student {
 
     @Override
     public String toString() {
-        return "Student{" +
+        return "Teacher{" +
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +

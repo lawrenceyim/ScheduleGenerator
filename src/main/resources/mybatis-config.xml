@@ -19,5 +19,11 @@
 
     <mappers>
         <mapper resource="mappers/CourseMapper.xml"/>
+        <mapper resource="mappers/TeacherMapper.xml"/>
+        <mapper resource="mappers/SubjectMapper.xml"/>
+        <mapper resource="mappers/StudentMapper.xml"/>
+        <mapper resource="mappers/StudentGroupMapper.xml"/>
+        <mapper resource="mappers/RoomMapper.xml"/>
+        <mapper resource="mappers/ScheduleMapper.xml"/>
     </mappers>
 </configuration>
