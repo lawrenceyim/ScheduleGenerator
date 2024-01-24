@@ -9,7 +9,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class AlgoTest {
     private final Logger OUTPUT_LOGGER = (Logger) LogManager.getLogger("Output");
@@ -36,19 +38,40 @@ public class AlgoTest {
         printSchedule(schedule);
     }
 
-    // TODO
     private List<StudentGroup> generateGroups() {
-        return null;
+        List<StudentGroup> groups = new ArrayList<>();
+        IntStream.range(1, 6).forEach(i -> {
+            StudentGroup group = new StudentGroup();
+            group.setId(i);
+            groups.add(group);
+        });
+        return groups;
     }
 
-    // TODO
     private List<Subject> generateSubjects() {
-        return null;
+        List<Subject> subjects = new ArrayList<>();
+        subjects.add(new Subject(1, "Algebra"));
+        subjects.add(new Subject(2, "English"));
+        subjects.add(new Subject(3, "Geometry"));
+        subjects.add(new Subject(4, "Social Studies"));
+        subjects.add(new Subject(5, "History"));
+        subjects.add(new Subject(6, "Geography"));
+        subjects.add(new Subject(7, "Physics"));
+        subjects.add(new Subject(8, "Chemistry"));
+        subjects.add(new Subject(9, "Biology"));
+        subjects.add(new Subject(10, "Computer Science"));
+        subjects.add(new Subject(11, "Physical Education"));
+        subjects.add(new Subject(12, "Art"));
+        subjects.add(new Subject(13, "Music"));
+        subjects.add(new Subject(14, "Foreign Language"));
+        subjects.add(new Subject(15, "Economics"));
+        return subjects;
     }
 
-    // TODO
     private List<Subject> generateSubjectsWithConstraints() {
-        return null;
+        List<Subject> subjects = new ArrayList<>();
+        subjects.add(new Subject(11, "Physical Education"));
+        return subjects;
     }
 
     // TODO
