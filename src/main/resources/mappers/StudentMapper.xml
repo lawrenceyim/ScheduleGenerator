@@ -4,6 +4,10 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.solvd.schedulegenerator.persistence.StudentDao">
+    <insert id="create" keyColumn="id" keyProperty="student.id" useGeneratedKeys="true">
+        INSERT INTO students(first_name, last_name, group_id) VALUES (#{student.firstName}, #{student.lastName}, #{groupId})
+    </insert>
+
     <sql id="studentSelect">
         SELECT
         id, first_name, last_name
@@ -18,6 +22,14 @@
     <select id="findAll" resultMap="StudentResultMap">
         <include refid="studentSelect"/>
     </select>
+
+    <update id="updateById">
+        UPDATE students SET first_name=#{student.firstName}, last_name=#{student.lastName}, group_id=#{groupId} WHERE id=#{studentId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM students WHERE id=#{id}
+    </delete>
 
     <resultMap id="StudentResultMap" type="com.solvd.schedulegenerator.domain.Student" autoMapping="false">
         <id column="id" property="id"/>

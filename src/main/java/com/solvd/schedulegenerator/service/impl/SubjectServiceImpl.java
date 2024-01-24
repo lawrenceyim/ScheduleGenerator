@@ -25,4 +25,9 @@ public class SubjectServiceImpl implements SubjectService {
             return subjectDao.findAll();
         }
     }
+
+    @Override
+    public void deleteById(long id) {
+
+    }
 }

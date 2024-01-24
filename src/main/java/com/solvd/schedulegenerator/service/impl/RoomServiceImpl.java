@@ -25,4 +25,9 @@ public class RoomServiceImpl implements RoomService {
             return roomDao.findAll();
         }
     }
+
+    @Override
+    public void deleteById(long id) {
+
+    }
 }

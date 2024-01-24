@@ -25,4 +25,9 @@ public class StudentGroupServiceImpl implements StudentGroupService {
             return studentGroupDao.findAll();
         }
     }
+
+    @Override
+    public void deleteById(long id) {
+
+    }
 }

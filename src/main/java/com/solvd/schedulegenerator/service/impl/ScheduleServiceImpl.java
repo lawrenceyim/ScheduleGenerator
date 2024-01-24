@@ -25,4 +25,9 @@ public class ScheduleServiceImpl implements ScheduleService {
             return scheduleDao.findAll();
         }
     }
+
+    @Override
+    public void deleteById(long id) {
+
+    }
 }

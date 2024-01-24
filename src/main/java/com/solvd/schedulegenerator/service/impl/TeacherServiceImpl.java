@@ -25,4 +25,9 @@ public class TeacherServiceImpl implements TeacherService {
             return teacherDao.findAll();
         }
     }
+
+    @Override
+    public void deleteById(long id) {
+
+    }
 }

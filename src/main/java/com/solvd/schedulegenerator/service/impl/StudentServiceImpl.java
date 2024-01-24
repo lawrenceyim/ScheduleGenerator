@@ -10,6 +10,15 @@ import java.util.List;
 import java.util.Optional;
 
 public class StudentServiceImpl implements StudentService {
+
+    @Override
+    public void create(Student student, long groupId) {
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession(true)){
+            StudentDao studentDao = sqlSession.getMapper(StudentDao.class);
+            studentDao.create(student, groupId);
+        }
+    }
+
     @Override
     public Optional<Student> findById(long id) {
         try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()){
@@ -23,6 +32,14 @@ public class StudentServiceImpl implements StudentService {
         try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()){
             StudentDao studentDao = sqlSession.getMapper(StudentDao.class);
             return studentDao.findAll();
+        }
+    }
+
+    @Override
+    public void deleteById(long id) {
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession(true)){
+            StudentDao studentDao = sqlSession.getMapper(StudentDao.class);
+            studentDao.deleteById(id);
         }
     }
 }
