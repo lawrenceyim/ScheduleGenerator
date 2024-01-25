@@ -22,6 +22,7 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
     private int subjectIterator = 0;
     private int coursesAdded = 0;
     private int totalCourses;
+    private int numberOfRooms;
 
     private ScheduleGenerationServiceImpl() {
     }
@@ -51,6 +52,7 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
         public Builder setCoursesPerDay(int coursesPerDay) {
             service.coursesPerDay = coursesPerDay;
             service.schedule = new Subject[service.groups.size()][service.DAYS_PER_WEEK][service.coursesPerDay];
+            service.numberOfRooms = service.groups.size();
             service.totalCourses = service.coursesPerDay * service.DAYS_PER_WEEK;
             service.subjectsToAdd = sortSubjectsByPriority(service.subjectsWithConstraint, service.subjects);
             return this;
@@ -113,6 +115,8 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
                         } else {
                             return true;
                         }
+                    } else {
+                        schedule[group][day][timeslot] = null;
                     }
                 }
             }
@@ -131,16 +135,17 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
         return true;
     }
 
+    // TODO: SET TEACHER AND ROOM OBJECTS
     private List<Course> convertScheduleToCourses() {
         List<Course> courses = new ArrayList<>();
         IntStream.range(0, groups.size()).forEach(group -> {
             IntStream.range(0, DAYS_PER_WEEK).forEach(day -> {
                 IntStream.range(0, coursesPerDay).forEach(timeslot -> {
                     Course course = new Course();
-                    course.setGroupId(groups.get(group).getId());
-                    course.setSubjectId(schedule[group][day][timeslot].getId());
-                    course.setTimeSlot(timeslot);
-                    course.setDayOfWeek(getNameOfDay(day));
+                    course.setGroup(groups.get(group));
+                    course.setSubject(schedule[group][day][timeslot]);
+                    course.setRoom(null);
+                    course.setTeacher(null);
                     courses.add(course);
                 });
             });
