@@ -6,6 +6,7 @@ import com.solvd.schedulegenerator.domain.Subject;
 import com.solvd.schedulegenerator.service.ScheduleGenerationService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -126,6 +127,10 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
 
     // TODO: Add logic to check for room repetition instead of just class
     private boolean hasNoConflict(int group, int day, int timeslot) {
+        if (subjectsWithConstraint.contains(schedule[group][day][timeslot]) && timeslot != coursesPerDay - 1) {
+            schedule[group][day][timeslot] = null;
+            return false;
+        }
         for (int i = 0; i < group; i++) {
             if (schedule[i][day][timeslot] == schedule[group][day][timeslot]) {
                 schedule[group][day][timeslot] = null;

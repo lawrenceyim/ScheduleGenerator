@@ -76,10 +76,10 @@ public class AlgoTest {
 
     private void printSchedule(List<Course> schedule) {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%-30s%-30s%-30s%-30s", "Group", "Subject", "Room", "Teacher"));
+        sb.append(String.format("%-45s%-45s%-20s%-45s", "Group", "Subject", "Room", "Teacher"));
         sb.append(System.lineSeparator());
         schedule.forEach(course -> {
-            sb.append(String.format("%-30s%-30s%-30s%-30s",
+            sb.append(String.format("%-45s%-45s%-20s%-45s",
                     course.getGroup(),
                     course.getSubject(),
                     course.getRoom(),
