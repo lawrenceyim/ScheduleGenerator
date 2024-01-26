@@ -72,7 +72,7 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
             subjectsWithoutConstraint.stream().forEach(subject -> {
                 orderedSubjects.add(subject);
             });
-            return new LinkedList<>(orderedSubjects);
+            return new ArrayList<>(orderedSubjects);
         }
     }
 
@@ -112,6 +112,7 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
                             group--;
                             if (group < 0) {
                                 group = groups.size() - 1;
+                                coursesAdded--;
                             }
                         } else {
                             return true;
