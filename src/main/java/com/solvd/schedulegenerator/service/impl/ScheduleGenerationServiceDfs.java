@@ -12,7 +12,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class ScheduleGenerationServiceImpl implements ScheduleGenerationService {
+public class ScheduleGenerationServiceDfs implements ScheduleGenerationService {
     private List<StudentGroup> groups;
     private List<Subject> subjects;  // All subjects
     private List<Subject> subjectsWithConstraint;  // Subjects with constraints
@@ -25,14 +25,14 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
     private int[] coursesAddedToGroup;
     private HashMap<Subject, List<Long>> subjectRoomList; // Store the list of classrooms for a subject
 
-    private ScheduleGenerationServiceImpl() {
+    private ScheduleGenerationServiceDfs() {
     }
 
     public static class Builder {
-        private final ScheduleGenerationServiceImpl service;
+        private final ScheduleGenerationServiceDfs service;
 
         public Builder() {
-            this.service = new ScheduleGenerationServiceImpl();
+            this.service = new ScheduleGenerationServiceDfs();
         }
 
         public Builder setGroups(List<StudentGroup> groups) {

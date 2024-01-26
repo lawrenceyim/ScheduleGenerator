@@ -4,7 +4,7 @@ import com.solvd.schedulegenerator.domain.Course;
 import com.solvd.schedulegenerator.domain.StudentGroup;
 import com.solvd.schedulegenerator.domain.Subject;
 import com.solvd.schedulegenerator.service.ScheduleGenerationService;
-import com.solvd.schedulegenerator.service.impl.ScheduleGenerationServiceImpl;
+import com.solvd.schedulegenerator.service.impl.ScheduleGenerationServiceDfs;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
 import org.junit.Test;
@@ -24,7 +24,7 @@ public class AlgoTest {
         final List<Subject> subjectsWithConstraint = generateSubjectsWithConstraints();
         final int coursesPerDay = 5;
 
-        ScheduleGenerationService service = new ScheduleGenerationServiceImpl.Builder()
+        ScheduleGenerationService service = new ScheduleGenerationServiceDfs.Builder()
                 .setGroups(groups)
                 .setSubjects(subjects)
                 .setSubjectsWithConstraints(subjectsWithConstraint)
