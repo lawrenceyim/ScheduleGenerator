@@ -7,6 +7,7 @@ import com.solvd.schedulegenerator.service.ScheduleGenerationService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +25,7 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
     private int coursesAdded = 0;
     private int totalCourses;
     private int numberOfRooms;
+    private HashMap<Subject, List<Long>> subjectRoomList; // Store the list of classrooms for a subject
 
     private ScheduleGenerationServiceImpl() {
     }
@@ -55,7 +57,8 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
             service.schedule = new Subject[service.groups.size()][service.DAYS_PER_WEEK][service.coursesPerDay];
             service.numberOfRooms = service.groups.size();
             service.totalCourses = service.coursesPerDay * service.DAYS_PER_WEEK;
-            service.subjectsToAdd = sortSubjectsByPriority(service.subjectsWithConstraint, service.subjects);
+            service.subjectsToAdd = sortSubjectsByPriority();
+            service.subjectRoomList = generateClassroomListForSubjects();
             return this;
         }
 
@@ -64,28 +67,40 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
         }
 
         // Class with constraints go first. Then classes without constraints
-        private List<Subject> sortSubjectsByPriority(List<Subject> subjectsWithConstraint, List<Subject> subjectsWithoutConstraint) {
+        private List<Subject> sortSubjectsByPriority() {
             LinkedHashSet<Subject> orderedSubjects = new LinkedHashSet<>();
-            subjectsWithConstraint.stream().forEach(subject -> {
+            service.subjectsWithConstraint.stream().forEach(subject -> {
                 orderedSubjects.add(subject);
             });
-            subjectsWithoutConstraint.stream().forEach(subject -> {
+            service.subjects.stream().forEach(subject -> {
                 orderedSubjects.add(subject);
             });
             return new ArrayList<>(orderedSubjects);
         }
-    }
 
-    @Override
-    public List<Course> generateSchedule() {
-        if (depthFirstSearch(0)) {
-            return convertScheduleToCourses();
-        } else {
-            throw new RuntimeException("Valid schedule could not be formed.");
+        private HashMap<Subject, List<Long>> generateClassroomListForSubjects() {
+            HashMap<Subject, List<Long>> rooms = new HashMap<>();
+            service.subjects.stream().forEach(subject -> {
+                rooms.put(subject, new ArrayList<>());
+            });
+            return rooms;
         }
     }
 
+    // TODO: Decide if this should throw an error or return null
+    @Override
+    public List<Course> generateSchedule() {
+        int roomLimit = 20;
+        for (; numberOfRooms < roomLimit; numberOfRooms++) {
+            if (depthFirstSearch(0)) {
+                return convertScheduleToCourses();
+            }
+        }
+        throw new RuntimeException("Unable to form valid schedule");
+    }
+
     // TODO: Add iterative deepening to minimize number of rooms and unique classes
+    // TODO: Add logic to add class based on available room/subject
     private boolean depthFirstSearch(int group) {
         // Base case
         if (coursesAdded == totalCourses) {
@@ -126,7 +141,7 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
         return false;
     }
 
-    // TODO: Add logic to check for room repetition instead of just class
+    // TODO: Change logic to check for subject and room repetition instead of just subject
     private boolean hasNoConflict(int group, int day, int timeslot) {
         if (subjectsWithConstraint.contains(schedule[group][day][timeslot]) && timeslot != coursesPerDay - 1) {
             schedule[group][day][timeslot] = null;
@@ -141,7 +156,8 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
         return true;
     }
 
-    // TODO: SET TEACHER AND ROOM OBJECTS
+    // TODO: SET TEACHER AND ROOM OBJECTS.
+    // TODO: Figure out a way to store and return the timeslot of the class
     private List<Course> convertScheduleToCourses() {
         List<Course> courses = new ArrayList<>();
         IntStream.range(0, groups.size()).forEach(group -> {
@@ -157,22 +173,5 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
             });
         });
         return courses;
-    }
-
-    private String getNameOfDay(int day) {
-        switch (day) {
-            case 1:
-                return "Monday";
-            case 2:
-                return "Tuesday";
-            case 3:
-                return "Wednesday";
-            case 4:
-                return "Thursday";
-            case 5:
-                return "Friday";
-            default:
-                throw new RuntimeException("Invalid day of the week.");
-        }
     }
 }
