@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -21,10 +20,9 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
     private final int DAYS_PER_WEEK = 5;
     private Subject[][][] schedule;  // [group][day of the week][timeslot]
     private List<Subject> subjectsToAdd;  // Iterate over this linked hashset to add courses to schedule
-    private int subjectIterator = 0;
-    private int coursesAdded = 0;
     private int totalCourses;
     private int numberOfRooms;
+    private int[] coursesAddedToGroup;
     private HashMap<Subject, List<Long>> subjectRoomList; // Store the list of classrooms for a subject
 
     private ScheduleGenerationServiceImpl() {
@@ -59,6 +57,7 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
             service.totalCourses = service.coursesPerDay * service.DAYS_PER_WEEK;
             service.subjectsToAdd = sortSubjectsByPriority();
             service.subjectRoomList = generateClassroomListForSubjects();
+            service.coursesAddedToGroup = new int[service.groups.size()];
             return this;
         }
 
@@ -90,55 +89,44 @@ public class ScheduleGenerationServiceImpl implements ScheduleGenerationService 
     // TODO: Decide if this should throw an error or return null
     @Override
     public List<Course> generateSchedule() {
-        int roomLimit = 20;
-        for (; numberOfRooms < roomLimit; numberOfRooms++) {
-            if (depthFirstSearch(0)) {
-                return convertScheduleToCourses();
-            }
+        if (depthFirstSearch(0)) {
+            return convertScheduleToCourses();
+        } else {
+            throw new RuntimeException("Unable to form valid schedule");
         }
-        throw new RuntimeException("Unable to form valid schedule");
     }
 
+    // If each subject has its own room, we do not need to account for room conflicts
     // TODO: Add iterative deepening to minimize number of rooms and unique classes
     // TODO: Add logic to add class based on available room/subject
     private boolean depthFirstSearch(int group) {
         // Base case
-        if (coursesAdded == totalCourses) {
+        if (baseCaseMet()) {
             return true;
         }
 
         for (int day = 0; day < DAYS_PER_WEEK; day++) {
             for (int timeslot = 0; timeslot < coursesPerDay; timeslot++) {
                 if (schedule[group][day][timeslot] == null) {
-                    schedule[group][day][timeslot] = subjectsToAdd.get(subjectIterator);
+                    schedule[group][day][timeslot] = subjectsToAdd.get(coursesAddedToGroup[group] % subjects.size());
                     if (hasNoConflict(group, day, timeslot)) {
-                        group++;
-                        if (group == groups.size()) {
-                            coursesAdded++;
-                            group = 0;
-                            subjectIterator = (subjectIterator + 1) % subjectsToAdd.size();
-                        }
-                        // If solution is invalid, back track
-                        if (!depthFirstSearch(group)) {
-                            subjectIterator--;
-                            if (subjectIterator < 0) {
-                                subjectIterator = subjectsToAdd.size() - 1;
-                            }
-                            group--;
-                            if (group < 0) {
-                                group = groups.size() - 1;
-                                coursesAdded--;
-                            }
+                        coursesAddedToGroup[group]++;
+                        // If solution is invalid, backtrack
+                        if (!depthFirstSearch((group + 1) % groups.size())) {
+                            schedule[group][day][timeslot] = null;
+                            coursesAddedToGroup[group]--;
                         } else {
                             return true;
                         }
-                    } else {
-                        schedule[group][day][timeslot] = null;
                     }
                 }
             }
         }
         return false;
+    }
+
+    private boolean baseCaseMet() {
+        return Arrays.stream(coursesAddedToGroup).allMatch(value -> value == totalCourses - 1);
     }
 
     // TODO: Change logic to check for subject and room repetition instead of just subject
