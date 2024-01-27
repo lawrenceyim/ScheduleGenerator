@@ -4,6 +4,8 @@ public class Subject {
     private long id;
     private String name;
 
+    private boolean shouldBeLast; // Flag for if a subject should be last in the day
+
     public Subject() {
     }
 
@@ -22,6 +24,14 @@ public class Subject {
 
     public String getName() {
         return name;
+    }
+
+    public boolean getShouldBeLast() {
+        return shouldBeLast;
+    }
+
+    public void setShouldBeLast(boolean shouldBeLast) {
+        this.shouldBeLast = shouldBeLast;
     }
 
     public void setName(String name) {

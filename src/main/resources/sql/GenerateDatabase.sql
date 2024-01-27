@@ -60,6 +60,21 @@ CREATE TABLE schedules (
   PRIMARY KEY (id)
 );
 
+CREATE TABLE class_periods (
+   id serial,
+   teacher_id BIGINT UNSIGNED NOT NULL,
+   room_id BIGINT UNSIGNED NOT NULL,
+   group_id BIGINT UNSIGNED NOT NULL,
+   subject_id BIGINT UNSIGNED NOT NULL,
+   timeslot INT UNSIGNED NOT NULL,
+   FOREIGN KEY (teacher_id) REFERENCES teachers(id),
+   FOREIGN KEY (room_id) REFERENCES rooms(id),
+   FOREIGN KEY (group_id) REFERENCES student_groups(id),
+   FOREIGN KEY (subject_id) REFERENCES subjects(id),
+   PRIMARY KEY (id)
+);
+
+
 INSERT INTO teachers(first_name, last_name) VALUES
     ('Ron', 'Swanson'),
     ('Jim', 'Peters'),

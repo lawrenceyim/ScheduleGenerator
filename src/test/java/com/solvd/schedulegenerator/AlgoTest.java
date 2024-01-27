@@ -1,10 +1,8 @@
 package com.solvd.schedulegenerator;
 
-import com.solvd.schedulegenerator.domain.Course;
-import com.solvd.schedulegenerator.domain.StudentGroup;
-import com.solvd.schedulegenerator.domain.Subject;
+import com.solvd.schedulegenerator.domain.*;
 import com.solvd.schedulegenerator.service.ScheduleGenerationService;
-import com.solvd.schedulegenerator.service.impl.ScheduleGenerationServiceDfs;
+import com.solvd.schedulegenerator.service.impl.ScheduleGenerationServiceGeneticAlgo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
 import org.junit.Test;
@@ -21,51 +19,76 @@ public class AlgoTest {
         // Instantiate input
         final List<StudentGroup> groups = generateGroups();
         final List<Subject> subjects = generateSubjects();
-        final List<Subject> subjectsWithConstraint = generateSubjectsWithConstraints();
+        final List<Teacher> teachers = generateTeachers();
+        final List<Room> rooms = generateRooms();
         final int coursesPerDay = 5;
 
-        ScheduleGenerationService service = new ScheduleGenerationServiceDfs.Builder()
+        ScheduleGenerationService service = new ScheduleGenerationServiceGeneticAlgo.Builder()
                 .setGroups(groups)
                 .setSubjects(subjects)
-                .setSubjectsWithConstraints(subjectsWithConstraint)
+                .setTeachers(teachers)
+                .setRooms(rooms)
                 .setCoursesPerDay(coursesPerDay)
                 .build();
 
-        // Run algo
-        List<Course> schedule = service.generateSchedule();
+        // Run Algo
+        List<ClassPeriod> schedule = service.generateSchedule();
 
         // Print result
         printSchedule(schedule);
     }
 
+    // Test data
+
     private List<StudentGroup> generateGroups() {
         List<StudentGroup> groups = new ArrayList<>();
-        IntStream.range(1, 6).forEach(i -> {
+        for (int i = 1; i <= 4; i++) { // Assuming 4 student groups
             StudentGroup group = new StudentGroup();
             group.setId(i);
             groups.add(group);
-        });
+        }
         return groups;
     }
 
     private List<Subject> generateSubjects() {
         List<Subject> subjects = new ArrayList<>();
-        subjects.add(new Subject(1, "Algebra"));
-        subjects.add(new Subject(2, "English"));
-        subjects.add(new Subject(3, "Geometry"));
-        subjects.add(new Subject(4, "Social Studies"));
-        subjects.add(new Subject(5, "History"));
-        subjects.add(new Subject(6, "Geography"));
-        subjects.add(new Subject(7, "Physics"));
-        subjects.add(new Subject(8, "Chemistry"));
-        subjects.add(new Subject(9, "Biology"));
-        subjects.add(new Subject(10, "Computer Science"));
-        subjects.add(new Subject(11, "Physical Education"));
-        subjects.add(new Subject(12, "Art"));
-        subjects.add(new Subject(13, "Music"));
-        subjects.add(new Subject(14, "Foreign Language"));
-        subjects.add(new Subject(15, "Economics"));
+        String[] subjectNames = {"Mathematics", "Science", "History", "Geography", "English",
+                "Physical Education", "Art", "Music", "Biology", "Chemistry",
+                "Physics", "Computer Science", "Literature", "Social Studies", "Economics"};
+
+        for (int i = 0; i < subjectNames.length; i++) {
+            Subject subject = new Subject();
+            subject.setId(i + 1);
+            subject.setName(subjectNames[i]);
+            subject.setShouldBeLast(subjectNames[i].equals("Physical Education")); // PE should be last
+            subjects.add(subject);
+        }
         return subjects;
+    }
+
+    private List<Teacher> generateTeachers() {
+        List<Teacher> teachers = new ArrayList<>();
+        for (int i = 1; i <= 15; i++) { // Assuming 15 teachers
+            Teacher teacher = new Teacher();
+            teacher.setId(i);
+            teacher.setFirstName("Teacher");
+            teacher.setLastName(String.valueOf(i));
+            teachers.add(teacher);
+        }
+        return teachers;
+    }
+
+    private List<Room> generateRooms() {
+        List<Room> rooms = new ArrayList<>();
+        for (int i = 1; i <= 14; i++) {
+            Room room = new Room();
+            room.setId(i);
+            room.setBuilding("Building " + ((i - 1) / 4 + 1));
+            room.setFloor((i - 1) % 4 + 1);
+            room.setRoomNumber(100 + i);
+            rooms.add(room);
+        }
+        return rooms;
     }
 
     private List<Subject> generateSubjectsWithConstraints() {
@@ -74,18 +97,25 @@ public class AlgoTest {
         return subjects;
     }
 
-    private void printSchedule(List<Course> schedule) {
+
+
+
+
+    private void printSchedule(List<ClassPeriod> schedule) {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%-45s%-45s%-20s%-45s", "Group", "Subject", "Room", "Teacher"));
+        sb.append(String.format("%-45s%-45s%-20s%-20s%-45s", "Group", "Subject", "Room", "Teacher", "Timeslot"));
         sb.append(System.lineSeparator());
-        schedule.forEach(course -> {
-            sb.append(String.format("%-45s%-45s%-20s%-45s",
-                    course.getGroup(),
-                    course.getSubject(),
-                    course.getRoom(),
-                    course.getTeacher()));
+        schedule.forEach(period -> {
+            sb.append(String.format("%-45s%-45s%-20s%-20s%-45s",
+                    period.getGroupId(),
+                    period.getSubjectId(),
+                    period.getRoomId(),
+                    period.getTeacherId(),
+                    period.getTimeslot()));
             sb.append(System.lineSeparator());
         });
         OUTPUT_LOGGER.info(sb.toString());
     }
+
+
 }

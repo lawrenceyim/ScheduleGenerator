@@ -1,38 +1,44 @@
 package com.solvd.schedulegenerator.service.impl;
 
-import com.solvd.schedulegenerator.domain.Course;
-import com.solvd.schedulegenerator.domain.StudentGroup;
-import com.solvd.schedulegenerator.domain.Subject;
+import com.solvd.schedulegenerator.domain.*;
 import com.solvd.schedulegenerator.service.ScheduleGenerationService;
 import com.solvd.schedulegenerator.utils.Pair;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.IntStream;
 
 public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationService {
+    // Domain models
+    private List<Teacher> teachers;
+    private List<Room> rooms;
     private List<StudentGroup> groups;
     private List<Subject> subjects;  // All subjects
     private List<Subject> subjectsWithConstraint;  // Subjects with constraints
+    private List<List<ClassPeriod>> population;
+    private List<Long> subjectsToAdd;  // Iterate over this linked hashset to add courses to schedule
+
+    // GA Attributes and Constraints
     private int coursesPerDay;  // No more than 5 per day
     private final int DAYS_PER_WEEK = 5;
-    private List<Long> subjectsToAdd;  // Iterate over this linked hashset to add courses to schedule
+    private int populationSize = 100;
     private int totalCourses;
     private int numberOfRooms;
     private int[] coursesAddedToGroup;
     private HashMap<Long, Subject> subjectIdMap;
     private HashSet<List<Long>> tabuList; // Similar to Tabu search, maintain a list of previously seen solutions
-    // Each element represents timeslot. Grouped by student group and day. Use % to find specific class
-    private List<List<Long>> schedules;
 
-    private ScheduleGenerationServiceGeneticAlgo() {
+    // Tournament Selection
+    private final int TOURNAMENT_SIZE = 3; // Size of each tournament
+    private final double MUTATION_RATE = 0.05;
+    private Random random = new Random();
+
+    // Constructor
+    public ScheduleGenerationServiceGeneticAlgo() {
+        this.subjectIdMap = generateSubjectIdMap();
+        this.subjectsToAdd = sortSubjectsByPriority();
     }
 
+    // Builder class
     public static class Builder {
         private final ScheduleGenerationServiceGeneticAlgo service;
 
@@ -50,132 +56,271 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
             return this;
         }
 
-        public ScheduleGenerationServiceGeneticAlgo.Builder setSubjectsWithConstraints(List<Subject> subjectsWithConstraint) {
-            service.subjectsWithConstraint = subjectsWithConstraint;
+        public ScheduleGenerationServiceGeneticAlgo.Builder setTeachers(List<Teacher> teachers) {
+            service.teachers = teachers;
+            return this;
+        }
+
+        public ScheduleGenerationServiceGeneticAlgo.Builder setRooms(List<Room> rooms) {
+            service.rooms = rooms;
             return this;
         }
 
         public ScheduleGenerationServiceGeneticAlgo.Builder setCoursesPerDay(int coursesPerDay) {
             service.coursesPerDay = coursesPerDay;
-            service.totalCourses = service.coursesPerDay * service.DAYS_PER_WEEK;
-            service.numberOfRooms = service.subjects.size();
-            service.subjectsToAdd = sortSubjectsByPriority();
-            service.coursesAddedToGroup = new int[service.groups.size()];
-            service.subjectIdMap = generateSubjectIdMap();
-            service.tabuList = new HashSet<>();
-            service.schedules = new ArrayList<>();
+            service.totalCourses = coursesPerDay * service.DAYS_PER_WEEK;
             return this;
         }
 
         public ScheduleGenerationService build() {
+            service.initializeAttributes();
             return service;
         }
-
-        // Class with constraints go first. Then classes without constraints
-        private List<Long> sortSubjectsByPriority() {
-            LinkedHashSet<Long> orderedSubjects = new LinkedHashSet<>();
-            service.subjectsWithConstraint.stream().forEach(subject -> {
-                orderedSubjects.add(subject.getId());
-            });
-            service.subjects.stream().forEach(subject -> {
-                orderedSubjects.add(subject.getId());
-            });
-            return new ArrayList<>(orderedSubjects);
-        }
-
-        private HashMap<Long, Subject> generateSubjectIdMap() {
-            HashMap<Long, Subject> hashMap = new HashMap<>();
-            service.subjects.stream().forEach(subject -> {
-                hashMap.put(subject.getId(), subject);
-            });
-            return hashMap;
-        }
     }
+
+    // Initialize additional attributes based on the set values
+    private void initializeAttributes() {
+        this.subjectIdMap = generateSubjectIdMap();
+        this.subjectsToAdd = sortSubjectsByPriority();
+        this.population = new ArrayList<>();
+        this.tabuList = new HashSet<>();
+    }
+
+    // Sort subjects by priority (with constraints first)
+    private List<Long> sortSubjectsByPriority() {
+        LinkedHashSet<Long> orderedSubjects = new LinkedHashSet<>();
+        if (subjectsWithConstraint != null) {
+            subjectsWithConstraint.forEach(subject -> orderedSubjects.add(subject.getId()));
+        }
+        if (subjects != null) {
+            subjects.forEach(subject -> orderedSubjects.add(subject.getId()));
+        }
+        return new ArrayList<>(orderedSubjects);
+    }
+
+    // Generate a mapping from subject ID to Subject
+    private HashMap<Long, Subject> generateSubjectIdMap() {
+        HashMap<Long, Subject> hashMap = new HashMap<>();
+        if (subjects != null) {
+            subjects.forEach(subject -> hashMap.put(subject.getId(), subject));
+        }
+        return hashMap;
+    }
+
+    // Other methods for the class
 
     @Override
-    public List<Course> generateSchedule() {
-        IntStream.range(0, 1000).forEach(i -> {
-            // TODO: Initialize population
-            // TODO: Evaluate fitness
-            // TODO: Select parents
-            // TODO: Create offsprings (recombine)
-            // TODO: Create mutations
-            // TODO: Create new population
-        });
-        // TODO: Find and return schedule with the highest fittness score
-        return null;
+    public List<ClassPeriod> generateSchedule() {
+        initializePopulation();
+        for (int generation = 0; generation < 1000; generation++) {
+            List<List<ClassPeriod>> parents = selectParents(this.population);
+            List<List<ClassPeriod>> offsprings = crossoverAndMutate(parents);
+            this.population = offsprings;
+        }
+        List<ClassPeriod> bestSchedule = Collections.max(population, Comparator.comparingInt(this::evaluateFitness));
+        return bestSchedule;
     }
 
-    // Return the schedule index based on the group and timeslot
-    private int findIndexByGroupAndTimeslot(int group, int timeslot) {
-        return group * subjects.size() + timeslot;
+    // Initializes the population for the genetic algorithm
+    private void initializePopulation() {
+        for (int i = 0; i < populationSize; i++) {
+            population.add(generateRandomSchedule());
+        }
     }
 
-    private Long findSubjectByGroupAndTimeslot(int group, int timeslot, int index) {
-        return schedules.get(index).get(findIndexByGroupAndTimeslot(group, timeslot));
-    }
-
-    private void setSubjectByGroupAndTimeslot(int group, int timeslot, Long subjectId, int index) {
-        List<Long> schedule = schedules.get(index);
-        schedule.set(findIndexByGroupAndTimeslot(group, index), subjectId);
-        schedules.set(index, schedule);
-    }
-
-    private List<Subject> convertIdToSubject(List<Long> schedule) {
-        List<Subject> list = new LinkedList<>();
-        schedule.forEach(id -> {
-            list.add(subjectIdMap.get(id));
-        });
-        return list;
-    }
-
-    private void addToTabuList(Long[] state) {
-        tabuList.add(Arrays.asList(state));
-    }
-
-    private boolean isInTabuList(Long[] state) {
-        return tabuList.contains(state);
-    }
-
-    // TODO: Determine population size
-    private void generateRandomSchedules() {
-        IntStream.range(0, 1000).forEach(i -> {
-            schedules.add(generateRandomSchedule());
-        });
-    }
-
-    private List<Long> generateRandomSchedule() {
-        ArrayList<Long> schedule = new ArrayList<>(totalCourses * groups.size());
-        // TODO: Implement code to generate random schedules
+    // Generates a random schedule
+    private List<ClassPeriod> generateRandomSchedule() {
+        List<ClassPeriod> schedule = new ArrayList<>();
+        for (StudentGroup group : groups) {
+            for (int day = 0; day < DAYS_PER_WEEK; day++) {
+                for (int course = 0; course < coursesPerDay; course++) {
+                    long teacherId = teachers.get(random.nextInt(teachers.size())).getId();
+                    long roomId = rooms.get(random.nextInt(rooms.size())).getId();
+                    long subjectId = subjects.get(random.nextInt(subjects.size())).getId();
+                    int timeslot = day * coursesPerDay + course;
+                    schedule.add(new ClassPeriod(teacherId, roomId, group.getId(), subjectId, timeslot));
+                }
+            }
+        }
         return schedule;
     }
 
-    // TODO: Add code to evaluate fitness of individuals in the population
-    private int evaluateFitness(int index) {
-        int fitness = 0;
+    private int evaluateFitness(List<ClassPeriod> schedule) {
+        int fitness = 1000; // Starting fitness value
+
+        Map<Pair<Integer, Integer>, Long> teacherTimeslotMap = new HashMap<>();
+        Map<Pair<Integer, Integer>, Long> roomTimeslotMap = new HashMap<>();
+        Map<Long, List<Pair<Integer, Integer>>> groupScheduleMap = new HashMap<>();
+
+        for (ClassPeriod period : schedule) {
+            int day = period.getTimeslot() / coursesPerDay;
+            int timeslot = period.getTimeslot() % coursesPerDay;
+            Pair<Integer, Integer> timeslotKey = new Pair<>(day, timeslot);
+
+            // Teacher overlap check
+            if (teacherTimeslotMap.containsKey(timeslotKey) &&
+                    teacherTimeslotMap.get(timeslotKey).equals(period.getTeacherId())) {
+                fitness -= 10;
+            } else {
+                teacherTimeslotMap.put(timeslotKey, period.getTeacherId());
+            }
+
+            // Room availability check
+            if (roomTimeslotMap.containsKey(timeslotKey) &&
+                    roomTimeslotMap.get(timeslotKey).equals(period.getRoomId())) {
+                fitness -= 10;
+            } else {
+                roomTimeslotMap.put(timeslotKey, period.getRoomId());
+            }
+
+            groupScheduleMap.computeIfAbsent(period.getGroupId(), k -> new ArrayList<>()).add(timeslotKey);
+        }
+
+
+        // Check for no gaps in schedule and some lessons should be the last in the day
+        for (Map.Entry<Long, List<Pair<Integer, Integer>>> entry : groupScheduleMap.entrySet()) {
+            List<Pair<Integer, Integer>> groupTimeslots = entry.getValue();
+            Collections.sort(groupTimeslots, Comparator.comparingInt(Pair::getFirst));
+
+
+            // Check for more than 5 lessons a day or gaps in the schedule
+            int[] dailyLessonsCount = new int[DAYS_PER_WEEK];
+            Pair<Integer, Integer> prevTimeslot = null;
+            for (Pair<Integer, Integer> timeslot : groupTimeslots) {
+                if (prevTimeslot != null &&
+                        (timeslot.getFirst() != prevTimeslot.getFirst() || timeslot.getSecond() != prevTimeslot.getSecond() + 1)) {
+                    fitness -= 5; // Penalty for gaps
+                }
+                dailyLessonsCount[timeslot.getFirst()]++;
+                prevTimeslot = timeslot;
+            }
+
+            // Check for daily lessons limit and lessons at the end of the day
+            for (int day = 0; day < DAYS_PER_WEEK; day++) {
+                int lastPeriodIndex = day * coursesPerDay + coursesPerDay - 1; // Index for the last period of the day
+                Pair<Integer, Integer> lastPeriod = groupTimeslots.stream()
+                        .filter(timeslot -> timeslot.getFirst() == lastPeriodIndex)
+                        .findFirst()
+                        .orElse(null);
+
+                if (lastPeriod != null) {
+                    long subjectId = lastPeriod.getSecond();
+                    Subject subject = subjectIdMap.get(subjectId);
+
+                    if (subject != null) {
+
+                        if (subject.getShouldBeLast()) {
+                            fitness += 5; // Reward for correctly placing the subject at the end of the day
+                        } else {
+                            fitness -= 5; // Penalty if a subject that should not be last is placed at the end of the day
+                        }
+                    } else {
+                        continue;
+                    }
+
+                }
+            }
+        }
+
         return fitness;
     }
 
-    // TODO: Add code to select pairs of elements in the population to serve as parents for new offsprings
-    private List<Pair<Integer, Integer>> selection() {
-        ArrayList<Pair<Integer, Integer>> parents = new ArrayList<>();
+
+    private List<List<ClassPeriod>> selectParents (List<List<ClassPeriod>> population) {
+        List<List<ClassPeriod>> parents = new ArrayList<>();
+
+        while (parents.size() < population.size()) {
+            List<ClassPeriod> parent1 = tournamentSelection(population);
+            List<ClassPeriod> parent2 = tournamentSelection(population);
+
+            // Ensure different parents are selected
+            while (parent1.equals(parent2)) {
+                parent2 = tournamentSelection(population);
+            }
+
+            parents.add(parent1);
+            parents.add(parent2);
+        }
         return parents;
     }
 
-    // TODO: Add code to recombine parents into offsprings
-    private List<List<Long>> recombination(List<Pair<Integer, Integer>> parents) {
-        List<List<Long>> offsprings = new ArrayList<>();
+    private List<ClassPeriod> tournamentSelection(List<List<ClassPeriod>> population) {
+        List<ClassPeriod> best = null;
+        int bestFitness = Integer.MIN_VALUE;
+
+        for (int i = 0; i < TOURNAMENT_SIZE; i++) {
+            int randomIndex = random.nextInt(population.size());
+            List<ClassPeriod> individual = population.get(randomIndex);
+            int individualFitness = evaluateFitness(individual);
+
+            if (best == null || individualFitness > bestFitness) {
+                best = individual;
+                bestFitness = individualFitness;
+            }
+        }
+
+        return best;
+    }
+
+    // Tournament Selection
+    private List<List<ClassPeriod>> crossover(List<ClassPeriod> parent1, List<ClassPeriod> parent2) {
+        int crossoverPoint = random.nextInt(parent1.size()); // Choose a random point for crossover
+        List<List<ClassPeriod>> offsprings = new ArrayList<>();
+
+        // Creating two new offspring from the parent schedules
+        List<ClassPeriod> offspring1 = new ArrayList<>(parent1.subList(0, crossoverPoint));
+        offspring1.addAll(parent2.subList(crossoverPoint, parent2.size()));
+
+        List<ClassPeriod> offspring2 = new ArrayList<>(parent2.subList(0, crossoverPoint));
+        offspring2.addAll(parent1.subList(crossoverPoint, parent1.size()));
+
+        offsprings.add(offspring1);
+        offsprings.add(offspring2);
+
         return offsprings;
     }
 
-    // TODO: Add code to mutate individuals in the population
-    private List<List<Long>> mutate() {
-        List<List<Long>> mutations = new ArrayList<>();
-        return mutations;
+
+
+    private void mutate(List<ClassPeriod> schedule) {
+        for (int i = 0; i < schedule.size(); i++) {
+            if (random.nextDouble() < MUTATION_RATE) {
+                ClassPeriod period = schedule.get(i);
+
+                mutateTeacher(period);
+                mutateSubject(period);
+                mutateRoom(period);
+            }
+        }
     }
 
-    // TODO: Add code to create a new population for the next generation
-    private void replace(List<List<Long>> parents, List<List<Long>> mutations) {
 
+    // Mutate helper methods
+    private void mutateTeacher(ClassPeriod period) {
+        // Choose a random teacher
+        long newTeacherId = teachers.get(random.nextInt(teachers.size())).getId();
+        period.setTeacherId(newTeacherId);
     }
+    private void mutateSubject(ClassPeriod period) {
+        // Choose a random subject
+        long newSubjectId = subjects.get(random.nextInt(subjects.size())).getId();
+        period.setSubjectId(newSubjectId);
+    }
+
+    private void mutateRoom(ClassPeriod period) {
+        // Choose a random room
+        long newRoomId = rooms.get(random.nextInt(rooms.size())).getId();
+        period.setRoomId(newRoomId);
+    }
+
+    private List<List<ClassPeriod>> crossoverAndMutate(List<List<ClassPeriod>> parents) {
+        List<List<ClassPeriod>> offsprings = new ArrayList<>();
+        for (int i = 0; i < parents.size(); i += 2) {
+            offsprings.addAll(crossover(parents.get(i), parents.get(i + 1)));
+        }
+        offsprings.forEach(this::mutate);
+        return offsprings;
+    }
+
 }
+
