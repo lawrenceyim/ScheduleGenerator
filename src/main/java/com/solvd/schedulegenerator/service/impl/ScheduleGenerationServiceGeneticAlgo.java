@@ -81,6 +81,7 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
 
 
         public ScheduleGenerationService build() {
+
             service.initializeAttributes();
             return service;
         }
@@ -145,11 +146,13 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
                 for (int course = 0; course < coursesPerDay; course++) {
                     long subjectId = subjects.get(random.nextInt(subjects.size())).getId();
 
+
                     Long teacherId = subjectTeacherMap.get(subjectId);
                     if (teacherId == null) {
                         // Edge case for 1 teacher 1 subject
                         continue;
                     }
+
 
                     long roomId = rooms.get(random.nextInt(rooms.size())).getId();
                     int timeslot = day * coursesPerDay + course;
@@ -157,7 +160,52 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
                 }
             }
         }
+        moveSubjectToEnd(schedule);
         return schedule;
+    }
+
+    private void moveSubjectToEnd(List<ClassPeriod> schedule) {
+        for (ClassPeriod period : schedule) {
+            if (isLastPeriodOfDay(period.getTimeslot())) {
+                Subject subject = subjectIdMap.get(period.getSubjectId());
+                if (subject != null && subject.getShouldBeLast()) {
+                    int newTimeslot = findEndOfDayTimeslot(schedule, period.getGroupId());
+                    if (newTimeslot != -1) {
+                        period.setTimeslot(newTimeslot);
+                    }
+                }
+            }
+        }
+    }
+
+    private int findEndOfDayTimeslot(List<ClassPeriod> schedule, long groupId) {
+        Set<Integer> occupiedEndTimeslots = new HashSet<>();
+
+        for (ClassPeriod period : schedule) {
+            int day = period.getTimeslot() / coursesPerDay;
+            int timeslot = period.getTimeslot() % coursesPerDay;
+
+            if (timeslot == coursesPerDay - 1 && period.getGroupId() == groupId) {
+                occupiedEndTimeslots.add(day * coursesPerDay + timeslot);
+            }
+        }
+
+        for (int day = 0; day < DAYS_PER_WEEK; day++) {
+            int endOfDayTimeslot = day * coursesPerDay + coursesPerDay - 1;
+            if (!occupiedEndTimeslots.contains(endOfDayTimeslot)) {
+                return endOfDayTimeslot;
+            }
+        }
+
+        return -1; // Can't find a timeslot, just have to change add more table entries
+    }
+
+    private long findSubjectForLastPeriod() {
+        return subjects.stream()
+                .filter(Subject::getShouldBeLast)
+                .findAny()
+                .orElseThrow(() -> new RuntimeException("No subject found for last period"))
+                .getId();
     }
 
 
@@ -215,32 +263,24 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
 
             // Check for daily lessons limit and lessons at the end of the day
             for (int day = 0; day < DAYS_PER_WEEK; day++) {
-                int lastPeriodIndex = day * coursesPerDay + coursesPerDay - 1; // Index for the last period of the day
-                Pair<Integer, Integer> lastPeriod = groupTimeslots.stream()
-                        .filter(timeslot -> timeslot.getFirst() == lastPeriodIndex)
-                        .findFirst()
-                        .orElse(null);
-
-                if (lastPeriod != null) {
-                    long subjectId = lastPeriod.getSecond();
-                    Subject subject = subjectIdMap.get(subjectId);
-
-                    if (subject != null) {
-
-                        if (subject.getShouldBeLast()) {
-                            fitness += 5; // Reward for correctly placing the subject at the end of the day
-                        } else {
-                            fitness -= 5; // Penalty if a subject that should not be last is placed at the end of the day
+                int lastPeriodIndex = day * coursesPerDay + coursesPerDay - 1;
+                for (ClassPeriod period : schedule) {
+                    if (period.getTimeslot() == lastPeriodIndex) {
+                        Subject subject = subjectIdMap.get(period.getSubjectId());
+                        if (subject != null && subject.getShouldBeLast()) {
+                            fitness += 10; // Increase fitness if condition met
+                        } else if (subject != null && !subject.getShouldBeLast()) {
+                            fitness -= 5; // Penalty if a non-last subject is placed at the end of the day
                         }
-                    } else {
-                        continue;
                     }
-
                 }
             }
         }
-
         return fitness;
+    }
+
+    private boolean isLastPeriodOfDay(int timeslot) {
+        return timeslot % coursesPerDay == coursesPerDay - 1;
     }
 
 
@@ -310,6 +350,8 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
                 mutateRoom(period);
             }
         }
+        moveSubjectToEnd(schedule);
+
     }
 
 

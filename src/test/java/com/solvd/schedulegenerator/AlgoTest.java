@@ -15,6 +15,10 @@ public class AlgoTest {
 
     private Map<Long, Subject> subjectIdMap;
 
+    private boolean predefined = false;
+
+    final int coursesPerDay = 5;
+
     @Test
     public void generateAndPrintResult() {
         // Instantiate input
@@ -26,8 +30,6 @@ public class AlgoTest {
         ScheduleGenerationService service = null;
 
 
-
-        final int coursesPerDay = 5;
         subjectIdMap = new HashMap<>();
         for (Subject subject : subjects) {
             subjectIdMap.put(subject.getId(), subject);
@@ -127,16 +129,6 @@ public class AlgoTest {
         return students;
     }
 
-
-    private List<Subject> generateSubjectsWithConstraints() {
-        List<Subject> subjects = new ArrayList<>();
-        subjects.add(new Subject(11, "Physical Education"));
-        return subjects;
-    }
-
-
-
-
     public void printSchedule(List<ClassPeriod> schedule) {
         for (ClassPeriod classPeriod : schedule) {
             System.out.println(classPeriod.toString());
@@ -148,6 +140,8 @@ public class AlgoTest {
         Map<Long, Long> subjectToTeacherMap = new HashMap<>();
         Map<Long, Long> groupToStudentCountMap = new HashMap<>();
         Map<Long, Subject> groupToLastSubjectMap = new HashMap<>();
+        boolean teachingFlag = true;
+        boolean lastSubjectFlag = true;
 
         for (ClassPeriod classPeriod : schedule) {
             long groupId = classPeriod.getGroupId();
@@ -157,42 +151,74 @@ public class AlgoTest {
             // Count the number of unique subjects for each group
             groupToSubjectsMap.computeIfAbsent(groupId, k -> new HashSet<>()).add(subjectId);
 
-
-
             // Check that each subject is taught by exactly one teacher
             Long existingTeacherId = subjectToTeacherMap.putIfAbsent(subjectId, teacherId);
             if (existingTeacherId != null && existingTeacherId != teacherId) {
+                teachingFlag = false;
                 throw new RuntimeException("Subject " + subjectId + " is taught by more than one teacher");
             }
 
-            // Count the number of students in each group
-            // This assumes that the ClassPeriod class has a getStudents method that returns a list of students
+
             long studentCount = classPeriod.getStudents().size();
             groupToStudentCountMap.put(groupId, studentCount);
 
-            // Check that some lessons are the last in the day
-            // This assumes that the ClassPeriod class has a getTimeslot method that returns the timeslot
             long timeslot = classPeriod.getTimeslot();
-            int coursesPerDay = 5;
-            if (timeslot == coursesPerDay) {
+            if (isLastPeriodOfDay((int) timeslot)) {
                 Subject subject = subjectIdMap.get(subjectId);
-                groupToLastSubjectMap.put(groupId, subject);
+                if (groupToLastSubjectMap.containsKey(groupId)) {
+                    Subject existingLastSubject = groupToLastSubjectMap.get(groupId);
+                    if (existingLastSubject.getId() != subject.getId()) {
+                        throw new RuntimeException("Inconsistent last subject for group " + groupId);
+                    }
+                } else {
+                    groupToLastSubjectMap.put(groupId, subject);
+                }
             }
         }
-
-        // Validate the requirements
-        for (long groupId : groupToSubjectsMap.keySet()) {
-            if (groupToSubjectsMap.get(groupId).size() != 15) {
-                throw new RuntimeException("Group " + groupId + " does not have exactly 15 subjects");
-            }
-            if (groupToStudentCountMap.get(groupId) != 20) {
-                throw new RuntimeException("Group " + groupId + " does not have exactly 20 students");
-            }
-            if (!groupToLastSubjectMap.get(groupId).getShouldBeLast()) {
+        for (Map.Entry<Long, Subject> entry : groupToLastSubjectMap.entrySet()) {
+            long groupId = entry.getKey();
+            Subject lastSubject = entry.getValue();
+            if (!lastSubject.getShouldBeLast()) {
                 throw new RuntimeException("The last subject of group " + groupId + " should be last");
             }
         }
+
+
+        for (long groupId : groupToSubjectsMap.keySet()) {
+            if (!groupToLastSubjectMap.get(groupId).getShouldBeLast()) {
+                lastSubjectFlag = false;
+                throw new RuntimeException("The last subject of group " + groupId + " should be last");
+            }
+        }
+
+        // Validate the requirements for predefined 15 subjects, 20 students
+        // However our program can be variable,
+        //  so only set this flag on if we are using the predefined 15 subjects, 20 students
+        // I set predefined to false by default because it wil
+        if (predefined) {
+            for (long groupId : groupToSubjectsMap.keySet()) {
+                if (groupToSubjectsMap.get(groupId).size() != 15) {
+                    throw new RuntimeException("Group " + groupId + " does not have exactly 15 subjects");
+                }
+                if (groupToStudentCountMap.get(groupId) != 20) {
+                    throw new RuntimeException("Group " + groupId + " does not have exactly 20 students");
+                }
+            }
+        }
+
+        // Successful validation logs
+        if (teachingFlag) {
+            OUTPUT_LOGGER.info( "Successfully passed Edge Case: Subjects are taught by exactly one teacher");
+        }
+        if (lastSubjectFlag) {
+            OUTPUT_LOGGER.info( "Successfully passed Edge Case: The last subject of each group is last");
+        }
+
     }
+    private boolean isLastPeriodOfDay(int timeslot) {
+        return timeslot % coursesPerDay == coursesPerDay - 1;
+    }
+
 
 
 }
