@@ -28,6 +28,19 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public void deleteById(long id) {
-
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
+            TeacherDao teacherDao = sqlSession.getMapper(TeacherDao.class);
+            teacherDao.deleteById(id);
+            sqlSession.commit();
+        }
     }
+
+    @Override
+    public Optional<Teacher> findBySubjectId(long subjectId) {
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
+            TeacherDao teacherDao = sqlSession.getMapper(TeacherDao.class);
+            return teacherDao.findBySubjectId(subjectId);
+        }
+    }
+
 }

@@ -1,11 +1,16 @@
 package com.solvd.schedulegenerator.domain;
 
+import java.util.List;
+
 public class ClassPeriod {
     private long teacherId;
     private long roomId;
     private long groupId;
     private long subjectId;
     private int timeslot; // Represents a specific period in the week
+
+    private List<Student> students;
+
 
     public ClassPeriod(long teacherId, long roomId, long groupId, long subjectId, int timeslot) {
         this.teacherId = teacherId;
@@ -15,6 +20,13 @@ public class ClassPeriod {
         this.timeslot = timeslot;
     }
 
+    public List<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
+    }
     public long getTeacherId() {
         return teacherId;
     }
@@ -57,13 +69,11 @@ public class ClassPeriod {
 
     @Override
     public String toString() {
-        return "ClassPeriod{" +
-                "teacherId=" + teacherId +
-                ", roomId=" + roomId +
-                ", groupId=" + groupId +
-                ", subjectId=" + subjectId +
-                ", timeslot=" + timeslot +
-                '}';
+        return "Timeslot: " + timeslot +
+                ", Group ID: " + groupId +
+                ", Subject ID: " + subjectId +
+                ", Teacher ID: " + teacherId +
+                ", Room ID: " + roomId;
     }
 
 

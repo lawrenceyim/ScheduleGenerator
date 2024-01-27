@@ -5,6 +5,7 @@ import com.solvd.schedulegenerator.service.ScheduleGenerationService;
 import com.solvd.schedulegenerator.utils.Pair;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationService {
@@ -16,6 +17,8 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
     private List<Subject> subjectsWithConstraint;  // Subjects with constraints
     private List<List<ClassPeriod>> population;
     private List<Long> subjectsToAdd;  // Iterate over this linked hashset to add courses to schedule
+
+    private HashMap<Long, Long> subjectTeacherMap; // Edge cases for 1 teacher per one subject
 
     // GA Attributes and Constraints
     private int coursesPerDay;  // No more than 5 per day
@@ -38,12 +41,14 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
         this.subjectsToAdd = sortSubjectsByPriority();
     }
 
+
     // Builder class
     public static class Builder {
         private final ScheduleGenerationServiceGeneticAlgo service;
 
         public Builder() {
             this.service = new ScheduleGenerationServiceGeneticAlgo();
+            this.service.subjectTeacherMap = new HashMap<>();
         }
 
         public ScheduleGenerationServiceGeneticAlgo.Builder setGroups(List<StudentGroup> groups) {
@@ -58,6 +63,7 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
 
         public ScheduleGenerationServiceGeneticAlgo.Builder setTeachers(List<Teacher> teachers) {
             service.teachers = teachers;
+            teachers.forEach(teacher -> service.subjectTeacherMap.put(teacher.getSubjectId(), teacher.getId()));
             return this;
         }
 
@@ -71,6 +77,8 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
             service.totalCourses = coursesPerDay * service.DAYS_PER_WEEK;
             return this;
         }
+
+
 
         public ScheduleGenerationService build() {
             service.initializeAttributes();
@@ -128,15 +136,22 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
         }
     }
 
-    // Generates a random schedule
+
     private List<ClassPeriod> generateRandomSchedule() {
         List<ClassPeriod> schedule = new ArrayList<>();
+
         for (StudentGroup group : groups) {
             for (int day = 0; day < DAYS_PER_WEEK; day++) {
                 for (int course = 0; course < coursesPerDay; course++) {
-                    long teacherId = teachers.get(random.nextInt(teachers.size())).getId();
-                    long roomId = rooms.get(random.nextInt(rooms.size())).getId();
                     long subjectId = subjects.get(random.nextInt(subjects.size())).getId();
+
+                    Long teacherId = subjectTeacherMap.get(subjectId);
+                    if (teacherId == null) {
+                        // Edge case for 1 teacher 1 subject
+                        continue;
+                    }
+
+                    long roomId = rooms.get(random.nextInt(rooms.size())).getId();
                     int timeslot = day * coursesPerDay + course;
                     schedule.add(new ClassPeriod(teacherId, roomId, group.getId(), subjectId, timeslot));
                 }
@@ -144,6 +159,9 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
         }
         return schedule;
     }
+
+
+
 
     private int evaluateFitness(List<ClassPeriod> schedule) {
         int fitness = 1000; // Starting fitness value
@@ -302,9 +320,12 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
         period.setTeacherId(newTeacherId);
     }
     private void mutateSubject(ClassPeriod period) {
-        // Choose a random subject
+        // Choose a random subject, but also check if the teacher can teach it
         long newSubjectId = subjects.get(random.nextInt(subjects.size())).getId();
-        period.setSubjectId(newSubjectId);
+        if (subjectTeacherMap.containsKey(newSubjectId)) {
+            period.setSubjectId(newSubjectId);
+            period.setTeacherId(subjectTeacherMap.get(newSubjectId));
+        }
     }
 
     private void mutateRoom(ClassPeriod period) {

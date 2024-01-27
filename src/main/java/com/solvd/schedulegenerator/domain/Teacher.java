@@ -4,14 +4,17 @@ public class Teacher {
     private long id;
     private String firstName;
     private String lastName;
+    private long subjectId;
+
 
     public Teacher() {
     }
 
-    public Teacher(long id, String firstName, String lastName) {
+    public Teacher(long id, String firstName, String lastName, long subjectId) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.subjectId = subjectId;
     }
 
     public long getId() {
@@ -36,6 +39,14 @@ public class Teacher {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public long getSubjectId() {
+        return subjectId;
+    }
+
+    public void setSubjectId(long subjectId) {
+        this.subjectId = subjectId;
     }
 
     @Override
