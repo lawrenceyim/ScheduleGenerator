@@ -8,6 +8,7 @@ import com.solvd.schedulegenerator.service.ScheduleGenerationService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,6 +26,7 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
     private int numberOfRooms;
     private int[] coursesAddedToGroup;
     private HashMap<Long, Subject> subjectIdMap;
+    private HashSet<List<Long>> tabuList; // Similar to Tabu search, maintain a list of previously seen solutions
 
     private ScheduleGenerationServiceGeneticAlgo() {
     }
@@ -59,6 +61,7 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
             service.subjectsToAdd = sortSubjectsByPriority();
             service.coursesAddedToGroup = new int[service.groups.size()];
             service.subjectIdMap = generateSubjectIdMap();
+            service.tabuList = new HashSet<>();
             return this;
         }
 
@@ -111,5 +114,13 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
             list.add(subjectIdMap.get(id));
         });
         return list;
+    }
+
+    private void addToTabuList(Long[] state) {
+        tabuList.add(Arrays.asList(state));
+    }
+
+    private boolean isInTabuList(Long[] state) {
+        return tabuList.contains(state);
     }
 }
