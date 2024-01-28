@@ -1,12 +1,23 @@
 package com.solvd.schedulegenerator.service.impl;
 
-import com.solvd.schedulegenerator.domain.*;
+import com.solvd.schedulegenerator.domain.ClassPeriod;
+import com.solvd.schedulegenerator.domain.Room;
+import com.solvd.schedulegenerator.domain.StudentGroup;
+import com.solvd.schedulegenerator.domain.Subject;
+import com.solvd.schedulegenerator.domain.Teacher;
 import com.solvd.schedulegenerator.service.ScheduleGenerationService;
 import com.solvd.schedulegenerator.utils.Pair;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationService {
     // Domain models
@@ -79,7 +90,6 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
         }
 
 
-
         public ScheduleGenerationService build() {
 
             service.initializeAttributes();
@@ -117,7 +127,6 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
     }
 
     // Other methods for the class
-
     @Override
     public List<ClassPeriod> generateSchedule() {
         initializePopulation();
@@ -137,7 +146,6 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
         }
     }
 
-
     private List<ClassPeriod> generateRandomSchedule() {
         List<ClassPeriod> schedule = new ArrayList<>();
 
@@ -146,13 +154,11 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
                 for (int course = 0; course < coursesPerDay; course++) {
                     long subjectId = subjects.get(random.nextInt(subjects.size())).getId();
 
-
                     Long teacherId = subjectTeacherMap.get(subjectId);
                     if (teacherId == null) {
                         // Edge case for 1 teacher 1 subject
                         continue;
                     }
-
 
                     long roomId = rooms.get(random.nextInt(rooms.size())).getId();
                     int timeslot = day * coursesPerDay + course;
@@ -208,9 +214,6 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
                 .getId();
     }
 
-
-
-
     private int evaluateFitness(List<ClassPeriod> schedule) {
         int fitness = 1000; // Starting fitness value
 
@@ -242,12 +245,10 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
             groupScheduleMap.computeIfAbsent(period.getGroupId(), k -> new ArrayList<>()).add(timeslotKey);
         }
 
-
         // Check for no gaps in schedule and some lessons should be the last in the day
         for (Map.Entry<Long, List<Pair<Integer, Integer>>> entry : groupScheduleMap.entrySet()) {
             List<Pair<Integer, Integer>> groupTimeslots = entry.getValue();
             Collections.sort(groupTimeslots, Comparator.comparingInt(Pair::getFirst));
-
 
             // Check for more than 5 lessons a day or gaps in the schedule
             int[] dailyLessonsCount = new int[DAYS_PER_WEEK];
@@ -283,8 +284,7 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
         return timeslot % coursesPerDay == coursesPerDay - 1;
     }
 
-
-    private List<List<ClassPeriod>> selectParents (List<List<ClassPeriod>> population) {
+    private List<List<ClassPeriod>> selectParents(List<List<ClassPeriod>> population) {
         List<List<ClassPeriod>> parents = new ArrayList<>();
 
         while (parents.size() < population.size()) {
@@ -338,8 +338,6 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
         return offsprings;
     }
 
-
-
     private void mutate(List<ClassPeriod> schedule) {
         for (int i = 0; i < schedule.size(); i++) {
             if (random.nextDouble() < MUTATION_RATE) {
@@ -354,13 +352,13 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
 
     }
 
-
     // Mutate helper methods
     private void mutateTeacher(ClassPeriod period) {
         // Choose a random teacher
         long newTeacherId = teachers.get(random.nextInt(teachers.size())).getId();
         period.setTeacherId(newTeacherId);
     }
+
     private void mutateSubject(ClassPeriod period) {
         // Choose a random subject, but also check if the teacher can teach it
         long newSubjectId = subjects.get(random.nextInt(subjects.size())).getId();
@@ -384,6 +382,5 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
         offsprings.forEach(this::mutate);
         return offsprings;
     }
-
 }
 
