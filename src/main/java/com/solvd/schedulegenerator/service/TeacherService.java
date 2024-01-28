@@ -6,4 +6,5 @@ import java.util.Optional;
 
 public interface TeacherService extends BaseService<Teacher> {
     Optional<Teacher> findBySubjectId(long subjectId);
+    void displayAllTeachers();
 }

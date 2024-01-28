@@ -11,11 +11,8 @@ import java.util.*;
 
 public class AlgoTest {
     private final Logger OUTPUT_LOGGER = (Logger) LogManager.getLogger("Output");
-
     private Map<Long, Subject> subjectIdMap;
-
     private boolean predefined = false;
-
     final int coursesPerDay = 5;
 
     @Test

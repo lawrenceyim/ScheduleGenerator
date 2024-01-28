@@ -1,6 +1,8 @@
 package com.solvd.schedulegenerator.menu.impl;
 
 import com.solvd.schedulegenerator.menu.IMenu;
+import com.solvd.schedulegenerator.service.TeacherService;
+import com.solvd.schedulegenerator.service.impl.TeacherServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
 
@@ -8,6 +10,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class ConsoleMenu implements IMenu {
+    private final TeacherService teacherService = new TeacherServiceImpl();
     private final Logger OUTPUT_LOGGER = (Logger) LogManager.getLogger("Output");
     private final Scanner scanner = new Scanner(System.in);
 
@@ -55,7 +58,7 @@ public class ConsoleMenu implements IMenu {
                 // TODO: View subjects
                 return;
             case 6:
-                // TODO: View teachers
+                teacherService.displayAllTeachers();
                 return;
             case 7:
                 System.exit(0);
