@@ -12,7 +12,7 @@ import java.util.Optional;
 public class TeacherServiceImpl implements TeacherService {
     @Override
     public Optional<Teacher> findById(long id) {
-        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()){
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
             TeacherDao teacherDao = sqlSession.getMapper(TeacherDao.class);
             return teacherDao.findById(id);
         }
@@ -20,7 +20,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public List<Teacher> findAll() {
-        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()){
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
             TeacherDao teacherDao = sqlSession.getMapper(TeacherDao.class);
             return teacherDao.findAll();
         }
@@ -28,6 +28,19 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public void deleteById(long id) {
-
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
+            TeacherDao teacherDao = sqlSession.getMapper(TeacherDao.class);
+            teacherDao.deleteById(id);
+            sqlSession.commit();
+        }
     }
+
+    @Override
+    public Optional<Teacher> findBySubjectId(long subjectId) {
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
+            TeacherDao teacherDao = sqlSession.getMapper(TeacherDao.class);
+            return teacherDao.findBySubjectId(subjectId);
+        }
+    }
+
 }

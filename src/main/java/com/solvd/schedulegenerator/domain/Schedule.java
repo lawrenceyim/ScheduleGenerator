@@ -7,7 +7,8 @@ public class Schedule {
     private DayOfWeek dayOfWeek;
     private short timeSlot;
 
-    public Schedule(){}
+    public Schedule() {
+    }
 
     public Schedule(long id, Course course, DayOfWeek dayOfWeek, short timeSlot) {
         this.id = id;
@@ -39,7 +40,8 @@ public class Schedule {
     public void setDayOfWeek(DayOfWeek dayOfWeek) {
         this.dayOfWeek = dayOfWeek;
     }
-    public void setDayOfWeek(int dayOfWeek){
+
+    public void setDayOfWeek(int dayOfWeek) {
         this.dayOfWeek = DayOfWeek.valueOf(dayOfWeek);
     }
 

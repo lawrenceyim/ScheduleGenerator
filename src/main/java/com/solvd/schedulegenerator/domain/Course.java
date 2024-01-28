@@ -1,16 +1,14 @@
 package com.solvd.schedulegenerator.domain;
 
-import com.solvd.schedulegenerator.persistence.SubjectDao;
-
 public class Course {
-
     private long id;
     private StudentGroup group;
     private Subject subject;
     private Room room;
     private Teacher teacher;
 
-    public Course(){}
+    public Course() {
+    }
 
     public Course(long id, StudentGroup group, Subject subject, Room room, Teacher teacher) {
         this.id = id;

@@ -6,7 +6,8 @@ public class Room {
     private int floor;
     private int roomNumber;
 
-    public Room(){}
+    public Room() {
+    }
 
     public Room(long id, String building, int floor, int roomNumber) {
         this.id = id;

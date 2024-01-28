@@ -13,7 +13,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void create(Student student, long groupId) {
-        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession(true)){
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession(true)) {
             StudentDao studentDao = sqlSession.getMapper(StudentDao.class);
             studentDao.create(student, groupId);
         }
@@ -21,7 +21,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Optional<Student> findById(long id) {
-        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()){
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
             StudentDao studentDao = sqlSession.getMapper(StudentDao.class);
             return studentDao.findById(id);
         }
@@ -29,7 +29,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<Student> findAll() {
-        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()){
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
             StudentDao studentDao = sqlSession.getMapper(StudentDao.class);
             return studentDao.findAll();
         }
@@ -37,7 +37,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void deleteById(long id) {
-        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession(true)){
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession(true)) {
             StudentDao studentDao = sqlSession.getMapper(StudentDao.class);
             studentDao.deleteById(id);
         }

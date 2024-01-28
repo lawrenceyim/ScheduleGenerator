@@ -12,7 +12,7 @@ import java.util.Optional;
 public class StudentGroupServiceImpl implements StudentGroupService {
     @Override
     public Optional<StudentGroup> findById(long id) {
-        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()){
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
             StudentGroupDao studentGroupDao = sqlSession.getMapper(StudentGroupDao.class);
             return studentGroupDao.findById(id);
         }
@@ -20,7 +20,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
 
     @Override
     public List<StudentGroup> findAll() {
-        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()){
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
             StudentGroupDao studentGroupDao = sqlSession.getMapper(StudentGroupDao.class);
             return studentGroupDao.findAll();
         }

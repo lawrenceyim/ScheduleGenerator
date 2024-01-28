@@ -8,7 +8,8 @@ public class StudentGroup {
     private long id;
     private List<Student> students = new ArrayList<>();
 
-    public StudentGroup(){}
+    public StudentGroup() {
+    }
 
     public StudentGroup(long id, List<Student> students) {
         this.id = id;
