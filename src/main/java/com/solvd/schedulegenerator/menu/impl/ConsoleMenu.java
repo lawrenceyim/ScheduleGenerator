@@ -1,9 +1,11 @@
 package com.solvd.schedulegenerator.menu.impl;
 
 import com.solvd.schedulegenerator.menu.IMenu;
+import com.solvd.schedulegenerator.service.StudentGroupService;
 import com.solvd.schedulegenerator.service.StudentService;
 import com.solvd.schedulegenerator.service.SubjectService;
 import com.solvd.schedulegenerator.service.TeacherService;
+import com.solvd.schedulegenerator.service.impl.StudentGroupServiceImpl;
 import com.solvd.schedulegenerator.service.impl.StudentServiceImpl;
 import com.solvd.schedulegenerator.service.impl.SubjectServiceImpl;
 import com.solvd.schedulegenerator.service.impl.TeacherServiceImpl;
@@ -14,6 +16,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class ConsoleMenu implements IMenu {
+    private final StudentGroupService studentGroupService = new StudentGroupServiceImpl();
     private final StudentService studentService = new StudentServiceImpl();
     private final SubjectService subjectService = new SubjectServiceImpl();
     private final TeacherService teacherService = new TeacherServiceImpl();
@@ -55,7 +58,7 @@ public class ConsoleMenu implements IMenu {
                 // TODO: View schedule
                 return;
             case 3:
-                // TODO: View student groups
+                studentGroupService.displayAllStudentGroups();
                 return;
             case 4:
                 studentService.displayAllStudents();
