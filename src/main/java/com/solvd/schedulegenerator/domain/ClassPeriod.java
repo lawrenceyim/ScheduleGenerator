@@ -27,6 +27,7 @@ public class ClassPeriod {
     public void setStudents(List<Student> students) {
         this.students = students;
     }
+
     public long getTeacherId() {
         return teacherId;
     }
