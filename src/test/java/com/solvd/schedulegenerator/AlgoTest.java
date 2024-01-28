@@ -8,7 +8,6 @@ import org.apache.logging.log4j.core.Logger;
 import org.junit.Test;
 
 import java.util.*;
-import java.util.stream.IntStream;
 
 public class AlgoTest {
     private final Logger OUTPUT_LOGGER = (Logger) LogManager.getLogger("Output");
@@ -131,7 +130,7 @@ public class AlgoTest {
 
     public void printSchedule(List<ClassPeriod> schedule) {
         for (ClassPeriod classPeriod : schedule) {
-            System.out.println(classPeriod.toString());
+            OUTPUT_LOGGER.info(classPeriod.toString());
         }
     }
 
