@@ -74,6 +74,7 @@ public class TeacherServiceImpl implements TeacherService {
                         subject.get().getName()));
                 sb.append(System.lineSeparator());
             });
+
             OUTPUT_LOGGER.info(sb.toString());
         }
     }
