@@ -10,20 +10,30 @@
 
     <sql id="scheduleSelect">
         SELECT
-        sc.id as id, sc.time_slot, sc.day_of_week,
-        c.id as course_id,
-        s.id as course_subject_id, s.name as course_subject_name,
-        t.id as course_teacher_id, t.first_name as course_teacher_first_name, t.last_name as course_teacher_last_name,
-        r.id as course_room_id, r.building as course_room_building, r.floor as course_room_floor, r.room_number as course_room_room_number,
-        g.id as course_group_id,
-        st.id as course_group_student_id, st.first_name as course_group_student_first_name, st.last_name as course_group_student_last_name
+            sc.id AS id,
+            sc.time_slot,
+            sc.day_of_week,
+            c.id AS course_id,
+            s.id AS course_subject_id,
+            s.name AS course_subject_name,
+            t.id AS course_teacher_id,
+            t.first_name AS course_teacher_first_name,
+            t.last_name AS course_teacher_last_name,
+            r.id AS course_room_id,
+            r.building AS course_room_building,
+            r.floor AS course_room_floor,
+            r.room_number AS course_room_room_number,
+            g.id AS course_group_id,
+            st.id AS course_group_student_id,
+            st.first_name AS course_group_student_first_name,
+            st.last_name AS course_group_student_last_name
         FROM schedules sc
-        LEFT JOIN courses c on sc.course_id=c.id
-        LEFT JOIN subjects s on c.subject_id=s.id
-        LEFT JOIN teachers t on c.teacher_id=t.id
-        LEFT JOIN rooms r on c.room_id=r.id
-        LEFT JOIN student_groups g on c.group_id=g.id
-        LEFT JOIN students st on g.id=st.group_id
+        LEFT JOIN courses c ON sc.course_id = c.id
+        LEFT JOIN subjects s ON c.subject_id = s.id
+        LEFT JOIN teachers t ON c.teacher_id = t.id
+        LEFT JOIN rooms r ON c.room_id = r.id
+        LEFT JOIN student_groups g ON c.group_id = g.id
+        LEFT JOIN students st ON g.id = st.group_id
     </sql>
 
     <select id="findById" resultMap="ScheduleResultMap">
@@ -36,11 +46,16 @@
     </select>
 
     <update id="updateById">
-        UPDATE schedules SET course_id=#{courseId}, day_of_week=#{schedule.dayOfWeek.number}, time_slot=#{schedule.timeSlot} WHERE id=#{scheduleId}
+        UPDATE schedules SET
+            course_id = #{courseId},
+            day_of_week = #{schedule.dayOfWeek.number},
+            time_slot = #{schedule.timeSlot}
+        WHERE id = #{scheduleId}
     </update>
 
     <delete id="deleteById">
-        DELETE FROM schedules WHERE id=#{id}
+        DELETE FROM schedules
+        WHERE id = #{id}
     </delete>
 
     <resultMap id="ScheduleResultMap" type="com.solvd.schedulegenerator.domain.Schedule" autoMapping="false">

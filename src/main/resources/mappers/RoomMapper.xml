@@ -5,12 +5,16 @@
 
 <mapper namespace="com.solvd.schedulegenerator.persistence.RoomDao">
     <insert id="create" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
-        INSERT INTO rooms (building, floor, room_number) VALUES (#{building}, #{floor}, #{roomNumber})
+        INSERT INTO rooms (building, floor, room_number)
+        VALUES (#{building}, #{floor}, #{roomNumber})
     </insert>
 
     <sql id="roomSelect">
         SELECT
-        id, building, floor, room_number
+            id,
+            building,
+            floor,
+            room_number
         FROM rooms
     </sql>
 
@@ -24,11 +28,16 @@
     </select>
 
     <update id="updateById">
-        UPDATE rooms SET building=#{room.building}, floor=#{room.floor}, room_number=#{room.roomNumber} WHERE id=#{id}
+        UPDATE rooms SET
+            building = #{room.building},
+            floor = #{room.floor},
+            room_number = #{room.roomNumber}
+        WHERE id = #{id}
     </update>
 
     <delete id="deleteById">
-        DELETE FROM rooms WHERE id=#{id}
+        DELETE FROM rooms
+        WHERE id = #{id}
     </delete>
 
     <resultMap id="RoomResultMap" type="com.solvd.schedulegenerator.domain.Room" autoMapping="false">

@@ -1,7 +1,7 @@
-drop database if exists schedule_generator;
-create database if not exists schedule_generator;
+DROP database IF EXISTS schedule_generator;
+CREATE database IF NOT EXISTS schedule_generator;
 
-use schedule_generator;
+USE schedule_generator;
 
 CREATE TABLE rooms (
     id serial,

@@ -51,7 +51,6 @@ public class AlgoTest {
     }
 
     // Test data
-
     private List<StudentGroup> generateGroups() {
         List<StudentGroup> groups = new ArrayList<>();
         for (int i = 1; i <= 2; i++) {
