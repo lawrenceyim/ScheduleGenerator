@@ -1,6 +1,8 @@
 package com.solvd.schedulegenerator;
 
 import org.apache.ibatis.jdbc.ScriptRunner;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -13,8 +15,9 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class DatabaseStartup {
-    public static void main(String[] args) {
+    private static final Logger OUTPUT_LOGGER = (Logger) LogManager.getLogger("Output");
 
+    public static void main(String[] args) {
         Properties prop = new Properties();
         String propFileName = "config.properties";
 
@@ -33,7 +36,7 @@ public class DatabaseStartup {
                 scriptRunner.runScript(reader);
             }
         } catch (ClassNotFoundException | SQLException | IOException e) {
-            System.out.println(e);
+            OUTPUT_LOGGER.error(e);
         }
     }
 }

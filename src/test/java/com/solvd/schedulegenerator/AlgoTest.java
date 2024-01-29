@@ -8,15 +8,11 @@ import org.apache.logging.log4j.core.Logger;
 import org.junit.Test;
 
 import java.util.*;
-import java.util.stream.IntStream;
 
 public class AlgoTest {
     private final Logger OUTPUT_LOGGER = (Logger) LogManager.getLogger("Output");
-
     private Map<Long, Subject> subjectIdMap;
-
     private boolean predefined = false;
-
     final int coursesPerDay = 5;
 
     @Test
@@ -28,7 +24,6 @@ public class AlgoTest {
         final List<Room> rooms = generateRooms();
 
         ScheduleGenerationService service = null;
-
 
         subjectIdMap = new HashMap<>();
         for (Subject subject : subjects) {
@@ -67,7 +62,6 @@ public class AlgoTest {
         return groups;
     }
 
-
     private List<Subject> generateSubjects() {
         List<Subject> subjects = new ArrayList<>();
         String[] subjectNames = {"Physics", "Chemistry", "Calculus", "History", "PE"};
@@ -80,7 +74,6 @@ public class AlgoTest {
         }
         return subjects;
     }
-
 
     private List<Teacher> generateTeachers() {
         List<Teacher> teachers = new ArrayList<>();
@@ -116,7 +109,6 @@ public class AlgoTest {
         return rooms;
     }
 
-
     private List<Student> generateStudents() {
         List<Student> students = new ArrayList<>();
         for (int i = 1; i <= 20; i++) {
@@ -131,7 +123,7 @@ public class AlgoTest {
 
     public void printSchedule(List<ClassPeriod> schedule) {
         for (ClassPeriod classPeriod : schedule) {
-            System.out.println(classPeriod.toString());
+            OUTPUT_LOGGER.info(classPeriod.toString());
         }
     }
 
@@ -158,7 +150,6 @@ public class AlgoTest {
                 throw new RuntimeException("Subject " + subjectId + " is taught by more than one teacher");
             }
 
-
             long studentCount = classPeriod.getStudents().size();
             groupToStudentCountMap.put(groupId, studentCount);
 
@@ -182,7 +173,6 @@ public class AlgoTest {
                 throw new RuntimeException("The last subject of group " + groupId + " should be last");
             }
         }
-
 
         for (long groupId : groupToSubjectsMap.keySet()) {
             if (!groupToLastSubjectMap.get(groupId).getShouldBeLast()) {
@@ -213,12 +203,9 @@ public class AlgoTest {
         if (lastSubjectFlag) {
             OUTPUT_LOGGER.info( "Successfully passed Edge Case: The last subject of each group is last");
         }
-
     }
+
     private boolean isLastPeriodOfDay(int timeslot) {
         return timeslot % coursesPerDay == coursesPerDay - 1;
     }
-
-
-
 }

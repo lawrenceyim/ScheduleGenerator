@@ -27,7 +27,8 @@
     </select>
 
     <update id="updateById">
-        UPDATE teachers SET first_name=#{teacher.firstName}, last_name=#{teacher.lastName}, subject_id=#{teacher.subjectId} WHERE id=#{id}
+        UPDATE teachers
+        SET first_name=#{teacher.firstName}, last_name=#{teacher.lastName}, subject_id=#{teacher.subjectId} WHERE id=#{id}
     </update>
 
     <delete id="deleteById">

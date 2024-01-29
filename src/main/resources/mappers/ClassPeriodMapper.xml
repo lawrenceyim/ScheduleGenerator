@@ -31,5 +31,3 @@
         <result column="timeslot" property="timeslot"/>
     </resultMap>
 </mapper>
-
-</mapper>

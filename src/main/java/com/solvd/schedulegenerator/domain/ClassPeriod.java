@@ -3,6 +3,8 @@ package com.solvd.schedulegenerator.domain;
 import java.util.List;
 
 public class ClassPeriod {
+
+    private long id;
     private long teacherId;
     private long roomId;
     private long groupId;
@@ -27,6 +29,7 @@ public class ClassPeriod {
     public void setStudents(List<Student> students) {
         this.students = students;
     }
+
     public long getTeacherId() {
         return teacherId;
     }
@@ -65,6 +68,14 @@ public class ClassPeriod {
 
     public void setTimeslot(int timeslot) {
         this.timeslot = timeslot;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getId() {
+        return this.id;
     }
 
     @Override
