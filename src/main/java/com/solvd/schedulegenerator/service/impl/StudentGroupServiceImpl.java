@@ -11,7 +11,6 @@ import org.apache.logging.log4j.core.Logger;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class StudentGroupServiceImpl implements StudentGroupService {
     private final Logger OUTPUT_LOGGER = (Logger) LogManager.getLogger("Output");

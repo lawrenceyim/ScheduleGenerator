@@ -9,7 +9,6 @@ import com.solvd.schedulegenerator.persistence.ClassPeriodDao;
 import com.solvd.schedulegenerator.service.ScheduleGenerationService;
 import com.solvd.schedulegenerator.utils.MyBatisSessionFactory;
 import com.solvd.schedulegenerator.utils.Pair;
-import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.SqlSession;
 
 import java.util.ArrayList;
@@ -92,9 +91,7 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
             return this;
         }
 
-
         public ScheduleGenerationService build() {
-
             service.initializeAttributes();
             return service;
         }

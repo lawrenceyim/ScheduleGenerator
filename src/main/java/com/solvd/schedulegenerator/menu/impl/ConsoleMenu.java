@@ -1,16 +1,20 @@
 package com.solvd.schedulegenerator.menu.impl;
 
+import com.solvd.schedulegenerator.domain.ClassPeriod;
 import com.solvd.schedulegenerator.menu.IMenu;
+import com.solvd.schedulegenerator.persistence.ClassPeriodDao;
 import com.solvd.schedulegenerator.persistence.RoomDao;
 import com.solvd.schedulegenerator.persistence.StudentGroupDao;
 import com.solvd.schedulegenerator.persistence.SubjectDao;
 import com.solvd.schedulegenerator.persistence.TeacherDao;
+import com.solvd.schedulegenerator.service.ClassPeriodService;
 import com.solvd.schedulegenerator.service.ScheduleGenerationService;
 import com.solvd.schedulegenerator.service.ScheduleService;
 import com.solvd.schedulegenerator.service.StudentGroupService;
 import com.solvd.schedulegenerator.service.StudentService;
 import com.solvd.schedulegenerator.service.SubjectService;
 import com.solvd.schedulegenerator.service.TeacherService;
+import com.solvd.schedulegenerator.service.impl.ClassPeriodServiceImpl;
 import com.solvd.schedulegenerator.service.impl.ScheduleGenerationServiceGeneticAlgo;
 import com.solvd.schedulegenerator.service.impl.ScheduleServiceImpl;
 import com.solvd.schedulegenerator.service.impl.StudentGroupServiceImpl;
@@ -26,7 +30,8 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class ConsoleMenu implements IMenu {
-    private final ScheduleService scheduleService = new ScheduleServiceImpl();
+
+    private final ClassPeriodService classPeriodService = new ClassPeriodServiceImpl();
     private final StudentGroupService studentGroupService = new StudentGroupServiceImpl();
     private final StudentService studentService = new StudentServiceImpl();
     private final SubjectService subjectService = new SubjectServiceImpl();
@@ -80,11 +85,11 @@ public class ConsoleMenu implements IMenu {
                             .build();
                     OUTPUT_LOGGER.info("Generating schedule...");
                     scheduleGenerationService.generateAndSaveSchedule();
-                    OUTPUT_LOGGER.info("Schedule generated");
+                    OUTPUT_LOGGER.info("Schedule generated and stored in the database.");
                 }
                 return;
             case 2:
-                scheduleService.displaySchedule();
+                classPeriodService.displaySchedule();
                 return;
             case 3:
                 studentGroupService.displayAllStudentGroups();

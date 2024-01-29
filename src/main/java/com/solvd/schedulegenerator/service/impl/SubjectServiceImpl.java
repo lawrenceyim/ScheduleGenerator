@@ -1,9 +1,7 @@
 package com.solvd.schedulegenerator.service.impl;
 
 import com.solvd.schedulegenerator.domain.Subject;
-import com.solvd.schedulegenerator.domain.Teacher;
 import com.solvd.schedulegenerator.persistence.SubjectDao;
-import com.solvd.schedulegenerator.persistence.TeacherDao;
 import com.solvd.schedulegenerator.service.SubjectService;
 import com.solvd.schedulegenerator.utils.MyBatisSessionFactory;
 import org.apache.ibatis.session.SqlSession;
