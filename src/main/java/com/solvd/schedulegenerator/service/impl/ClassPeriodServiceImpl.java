@@ -67,24 +67,21 @@ public class ClassPeriodServiceImpl implements ClassPeriodService {
             StringBuilder sb = new StringBuilder();
             groups.stream().forEach(group -> {
                 sb.append("Group ID: ").append(group.getId()).append(System.lineSeparator());
-                sb.append(String.format("%-15s%-15s%-15s%-30s%-15s",
-                        "Teacher ID",
-                        "Room ID",
-                        "Group ID",
+                sb.append(String.format("%-15s%-30s%-15s%-15s",
+                        "Time slot",
                         "Subject",
-                        "Time slot"));
+                        "Teacher ID",
+                        "Room ID"));
                 sb.append(System.lineSeparator());
-
                 classPeriods.stream()
                         .filter(classPeriod -> classPeriod.getGroupId() == group.getId())
                         .sorted(Comparator.comparing(ClassPeriod::getTimeslot))
                         .forEach(classPeriod -> {
-                            sb.append(String.format("%-15s%-15s%-15s%-30s%-15s",
-                                    classPeriod.getTeacherId(),
-                                    classPeriod.getRoomId(),
-                                    classPeriod.getRoomId(),
+                            sb.append(String.format("%-15s%-30s%-15s%-15s",
+                                    classPeriod.getTimeslot(),
                                     subjectDao.findById(classPeriod.getSubjectId()).get().getName(),
-                                    classPeriod.getTimeslot()));
+                                    classPeriod.getTeacherId(),
+                                    classPeriod.getRoomId()));
                             sb.append(System.lineSeparator());
                         });
             });
