@@ -19,7 +19,6 @@ CREATE TABLE subjects (
 
 CREATE TABLE teachers (
     id serial,
-    id serial,
     first_name VARCHAR(45) NOT NULL,
     last_name VARCHAR(45) NOT NULL,
     subject_id BIGINT UNSIGNED NOT NULL,

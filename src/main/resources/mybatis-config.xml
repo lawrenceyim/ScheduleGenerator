@@ -18,6 +18,7 @@
     </environments>
 
     <mappers>
+        <mapper resource="mappers/ClassPeriodMapper.xml"/>
         <mapper resource="mappers/CourseMapper.xml"/>
         <mapper resource="mappers/TeacherMapper.xml"/>
         <mapper resource="mappers/SubjectMapper.xml"/>
