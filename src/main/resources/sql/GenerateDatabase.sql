@@ -17,6 +17,12 @@ CREATE TABLE subjects (
   PRIMARY KEY (id)
 );
 
+CREATE TABLE subject_constraints (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES subjects(id)
+);
+
 CREATE TABLE teachers (
     id serial,
     first_name VARCHAR(45) NOT NULL,
@@ -81,7 +87,6 @@ INSERT INTO subjects(name) VALUES
     ('Chemistry'),
     ('Calculus'),
     ('History'),
-    ('Physical Education'),
     ('English'),
     ('Spanish'),
     ('Biology'),
@@ -91,7 +96,18 @@ INSERT INTO subjects(name) VALUES
     ('Geography'),
     ('Mathematics'),
     ('Music'),
-    ('Psychology');
+    ('Psychology'),
+    ('Physical Education');
+
+SET @physical_education_id = (
+    SELECT id
+    FROM subjects
+    WHERE name = 'Physical Education'
+);
+
+INSERT INTO subject_constraints (id)
+VALUES (@physical_education_id);
+
 
 INSERT INTO teachers(first_name, last_name, subject_id) VALUES
     ('Ron', 'Swanson', 1),

@@ -1,10 +1,12 @@
 package com.solvd.schedulegenerator.menu.impl;
 
 import com.solvd.schedulegenerator.domain.ClassPeriod;
+import com.solvd.schedulegenerator.domain.SubjectConstraint;
 import com.solvd.schedulegenerator.menu.IMenu;
 import com.solvd.schedulegenerator.persistence.ClassPeriodDao;
 import com.solvd.schedulegenerator.persistence.RoomDao;
 import com.solvd.schedulegenerator.persistence.StudentGroupDao;
+import com.solvd.schedulegenerator.persistence.SubjectConstraintDao;
 import com.solvd.schedulegenerator.persistence.SubjectDao;
 import com.solvd.schedulegenerator.persistence.TeacherDao;
 import com.solvd.schedulegenerator.service.ClassPeriodService;
@@ -28,6 +30,7 @@ import org.apache.logging.log4j.core.Logger;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class ConsoleMenu implements IMenu {
 
@@ -76,6 +79,7 @@ public class ConsoleMenu implements IMenu {
                 try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
                     int coursesPerDay = 5;
                     RoomDao roomDao = sqlSession.getMapper(RoomDao.class);
+                    SubjectConstraintDao subjectConstraintDao = sqlSession.getMapper(SubjectConstraintDao.class);
                     StudentGroupDao studentGroupDao = sqlSession.getMapper(StudentGroupDao.class);
                     SubjectDao subjectDao = sqlSession.getMapper(SubjectDao.class);
                     TeacherDao teacherDao = sqlSession.getMapper(TeacherDao.class);
@@ -86,6 +90,11 @@ public class ConsoleMenu implements IMenu {
                             .setTeachers(teacherDao.findAll())
                             .setRooms(roomDao.findAll())
                             .setCoursesPerDay(coursesPerDay)
+                            .setCoursesWithConstraints(
+                                    subjectConstraintDao.findAll()
+                                                        .stream()
+                                                        .map(SubjectConstraint::getId)
+                                                        .collect(Collectors.toList()))
                             .build();
                     OUTPUT_LOGGER.info("Generating schedule...");
                     scheduleGenerationService.generateAndSaveSchedule();

@@ -16,11 +16,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationService {
     // Domain models
@@ -28,9 +28,9 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
     private List<Room> rooms;
     private List<StudentGroup> groups;
     private List<Subject> subjects;  // All subjects
-    private List<Subject> subjectsWithConstraint;  // Subjects with constraints
+    private List<Long> subjectConstraints;
+    private List<Subject> subjectsWithoutConstraint;
     private List<List<ClassPeriod>> population;
-    private List<Long> subjectsToAdd;  // Iterate over this linked hashset to add courses to schedule
 
     private HashMap<Long, Long> subjectTeacherMap; // Edge cases for 1 teacher per one subject
 
@@ -38,11 +38,7 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
     private int coursesPerDay;  // No more than 5 per day
     private final int DAYS_PER_WEEK = 5;
     private int populationSize = 100;
-    private int totalCourses;
-    private int numberOfRooms;
-    private int[] coursesAddedToGroup;
     private HashMap<Long, Subject> subjectIdMap;
-    private HashSet<List<Long>> tabuList; // Similar to Tabu search, maintain a list of previously seen solutions
 
     // Tournament Selection
     private final int TOURNAMENT_SIZE = 3; // Size of each tournament
@@ -52,7 +48,6 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
     // Constructor
     public ScheduleGenerationServiceGeneticAlgo() {
         this.subjectIdMap = generateSubjectIdMap();
-        this.subjectsToAdd = sortSubjectsByPriority();
     }
 
     // Builder class
@@ -87,7 +82,11 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
 
         public ScheduleGenerationServiceGeneticAlgo.Builder setCoursesPerDay(int coursesPerDay) {
             service.coursesPerDay = coursesPerDay;
-            service.totalCourses = coursesPerDay * service.DAYS_PER_WEEK;
+            return this;
+        }
+
+        public ScheduleGenerationServiceGeneticAlgo.Builder setCoursesWithConstraints(List<Long> subjectConstraints) {
+            service.subjectConstraints = subjectConstraints;
             return this;
         }
 
@@ -100,21 +99,14 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
     // Initialize additional attributes based on the set values
     private void initializeAttributes() {
         this.subjectIdMap = generateSubjectIdMap();
-        this.subjectsToAdd = sortSubjectsByPriority();
+        this.subjectsWithoutConstraint = getSubjectsWithoutConstraints();
         this.population = new ArrayList<>();
-        this.tabuList = new HashSet<>();
     }
 
-    // Sort subjects by priority (with constraints first)
-    private List<Long> sortSubjectsByPriority() {
-        LinkedHashSet<Long> orderedSubjects = new LinkedHashSet<>();
-        if (subjectsWithConstraint != null) {
-            subjectsWithConstraint.forEach(subject -> orderedSubjects.add(subject.getId()));
-        }
-        if (subjects != null) {
-            subjects.forEach(subject -> orderedSubjects.add(subject.getId()));
-        }
-        return new ArrayList<>(orderedSubjects);
+    private List<Subject> getSubjectsWithoutConstraints() {
+        return subjects.stream()
+                .filter(subject -> !subjectConstraints.contains(subject.getId()))
+                .collect(Collectors.toList());
     }
 
     // Generate a mapping from subject ID to Subject
@@ -168,7 +160,13 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
         for (StudentGroup group : groups) {
             for (int day = 0; day < DAYS_PER_WEEK; day++) {
                 for (int course = 0; course < coursesPerDay; course++) {
-                    long subjectId = subjects.get(random.nextInt(subjects.size())).getId();
+                    long subjectId;
+                    if (course == coursesPerDay - 1) {
+                        subjectId = subjects.get(random.nextInt(subjects.size())).getId();
+                    } else {
+                        subjectId = subjectsWithoutConstraint.get(random.nextInt
+                                (subjectsWithoutConstraint.size())).getId();
+                    }
 
                     Long teacherId = subjectTeacherMap.get(subjectId);
                     if (teacherId == null) {
