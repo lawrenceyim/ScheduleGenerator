@@ -5,15 +5,18 @@
 
 <mapper namespace="com.solvd.schedulegenerator.persistence.StudentGroupDao">
     <insert id="create" keyColumn="id" keyProperty="group.id" useGeneratedKeys="false">
-        INSERT INTO student_groups(id) VALUES (#{id})
+        INSERT INTO student_groups(id)
+        VALUES (#{id})
     </insert>
 
     <sql id="studentGroupSelect">
         SELECT
-        g.id as id,
-        s.id as student_id, s.first_name as student_first_name, s.last_name as student_last_name
+            g.id AS id,
+            s.id AS student_id,
+            s.first_name AS student_first_name,
+            s.last_name AS student_last_name
         FROM student_groups g
-        LEFT JOIN students s on g.id=s.group_id
+        LEFT JOIN students s ON g.id = s.group_id
     </sql>
 
     <select id="findById" resultMap="StudentGroupResultMap">
@@ -26,11 +29,14 @@
     </select>
 
     <update id="updateById">
-        UPDATE student_groups SET id=${group.id} WHERE id=${id}
+        UPDATE student_groups SET
+            id = ${group.id}
+        WHERE id = ${id}
     </update>
 
     <delete id="deleteById">
-        DELETE FROM student_groups WHERE id=${id}
+        DELETE FROM student_groups
+        WHERE id = ${id}
     </delete>
 
     <resultMap id="StudentGroupResultMap" type="com.solvd.schedulegenerator.domain.StudentGroup" autoMapping="false">

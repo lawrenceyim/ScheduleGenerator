@@ -3,23 +3,38 @@
 <mapper namespace="com.solvd.schedulegenerator.persistence.ClassPeriodDao">
 
     <insert id="create" keyColumn="id" useGeneratedKeys="true">
-        INSERT INTO class_periods (teacher_id, room_id, group_id, subject_id, timeslot) VALUES (#{teacherId}, #{roomId}, #{groupId}, #{subjectId}, #{timeslot})
+        INSERT INTO class_periods (teacher_id, room_id, group_id, subject_id, timeslot) VALUES (
+            #{teacherId},
+            #{roomId},
+            #{groupId},
+            #{subjectId},
+            #{timeslot})
     </insert>
 
     <update id="updateById">
-        UPDATE class_periods SET teacher_id=#{teacherId}, room_id=#{roomId}, group_id=#{groupId}, subject_id=#{subjectId}, timeslot=#{timeslot} WHERE id=#{classPeriodId}
+        UPDATE class_periods SET
+            teacher_id = #{teacherId},
+            room_id = #{roomId},
+            group_id = #{groupId},
+            subject_id = #{subjectId},
+            timeslot = #{timeslot}
+        WHERE id = #{classPeriodId}
     </update>
 
     <select id="findById" resultMap="ClassPeriodResultMap" parameterType="long">
-        SELECT * FROM class_periods WHERE id = #{id}
+        SELECT *
+        FROM class_periods
+        WHERE id = #{id}
     </select>
 
     <select id="findAll" resultMap="ClassPeriodResultMap">
-        SELECT * FROM class_periods
+        SELECT *
+        FROM class_periods
     </select>
 
     <delete id="deleteById" parameterType="long">
-        DELETE FROM class_periods WHERE id = #{id}
+        DELETE FROM class_periods
+        WHERE id = #{id}
     </delete>
 
     <resultMap id="ClassPeriodResultMap" type="com.solvd.schedulegenerator.domain.ClassPeriod">
@@ -30,6 +45,4 @@
         <result column="subject_id" property="subjectId"/>
         <result column="timeslot" property="timeslot"/>
     </resultMap>
-</mapper>
-
 </mapper>

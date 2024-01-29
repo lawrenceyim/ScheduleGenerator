@@ -5,23 +5,32 @@
 
 <mapper namespace="com.solvd.schedulegenerator.persistence.CourseDao">
     <insert id="create" keyColumn="id" useGeneratedKeys="true">
-        INSERT INTO courses (teacher_id, room_id, group_id, subject_id) VALUES (#{teacherId}, #{roomId}, #{groupId}, #{subjectId})
+        INSERT INTO courses (teacher_id, room_id, group_id, subject_id)
+        VALUES (#{teacherId}, #{roomId}, #{groupId}, #{subjectId})
     </insert>
 
     <sql id="courseSelect">
         SELECT
-        c.id as id,
-        s.id as subject_id, s.name as subject_name,
-        t.id as teacher_id, t.first_name as teacher_first_name, t.last_name as teacher_last_name,
-        r.id as room_id, r.building as room_building, r.floor as room_floor, r.room_number as room_room_number,
-        g.id as group_id,
-        st.id as group_student_id, st.first_name as group_student_first_name, st.last_name as group_student_last_name
+            c.id AS id,
+            s.id AS subject_id,
+            s.name AS subject_name,
+            t.id AS teacher_id,
+            t.first_name AS teacher_first_name,
+            t.last_name AS teacher_last_name,
+            r.id AS room_id,
+            r.building AS room_building,
+            r.floor AS room_floor,
+            r.room_number AS room_room_number,
+            g.id AS group_id,
+            st.id AS group_student_id,
+            st.first_name AS group_student_first_name,
+            st.last_name AS group_student_last_name
         FROM courses c
-        LEFT JOIN subjects s on c.subject_id=s.id
-        LEFT JOIN teachers t on c.teacher_id=t.id
-        LEFT JOIN rooms r on c.room_id=r.id
-        LEFT JOIN student_groups g on c.group_id=g.id
-        LEFT JOIN students st on g.id=st.group_id
+        LEFT JOIN subjects s ON c.subject_id = s.id
+        LEFT JOIN teachers t ON c.teacher_id = t.id
+        LEFT JOIN rooms r ON c.room_id = r.id
+        LEFT JOIN student_groups g ON c.group_id = g.id
+        LEFT JOIN students st ON g.id = st.group_id
     </sql>
 
     <select id="findById" resultMap="CourseResultMap">
@@ -34,11 +43,17 @@
     </select>
 
     <update id="updateById">
-        UPDATE courses SET teacher_id=#{teacherId}, room_id=#{roomId}, group_id=#{groupId}, subject_id=#{subjectId} WHERE id=#{courseId}
+        UPDATE courses SET
+            teacher_id = #{teacherId},
+            room_id = #{roomId},
+            group_id = #{groupId},
+            subject_id = #{subjectId}
+        WHERE id = #{courseId}
     </update>
 
     <delete id="deleteById">
-        DELETE FROM courses WHERE id=#{id}
+        DELETE FROM courses
+        WHERE id = #{id}
     </delete>
 
     <resultMap id="CourseResultMap" type="com.solvd.schedulegenerator.domain.Course" autoMapping="false">

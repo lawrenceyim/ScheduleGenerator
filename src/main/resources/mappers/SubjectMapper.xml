@@ -4,12 +4,14 @@
 
 <mapper namespace="com.solvd.schedulegenerator.persistence.SubjectDao">
     <insert id="create" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
-        INSERT INTO subjects (name) VALUES (#{name})
+        INSERT INTO subjects (name)
+        VALUES (#{name})
     </insert>
 
     <sql id="subjectSelect">
         SELECT
-        id, name
+            id,
+            name
         FROM subjects
     </sql>
 
@@ -23,11 +25,14 @@
     </select>
 
     <update id="updateById">
-        UPDATE subjects SET name=#{subject.name} WHERE id=#{id}
+        UPDATE subjects SET
+            name = #{subject.name}
+        WHERE id = #{id}
     </update>
 
     <delete id="deleteById">
-        DELETE FROM subjects WHERE id=#{id}
+        DELETE FROM subjects
+        WHERE id = #{id}
     </delete>
 
     <resultMap id="SubjectResultMap" type="com.solvd.schedulegenerator.domain.Subject" autoMapping="false">

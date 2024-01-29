@@ -5,15 +5,19 @@
 
 <mapper namespace="com.solvd.schedulegenerator.persistence.TeacherDao">
     <insert id="create" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
-        INSERT INTO teachers (first_name, last_name, subject_id) VALUES (#{firstName}, #{lastName}, #{subjectId})
+        INSERT INTO teachers (first_name, last_name, subject_id) VALUES (
+            #{firstName},
+            #{lastName},
+            #{subjectId}
+        )
     </insert>
 
     <sql id="teacherSelect">
         SELECT
-        id,
-        first_name,
-        last_name,
-        subject_id
+            id,
+            first_name,
+            last_name,
+            subject_id
         FROM teachers
     </sql>
 
@@ -27,11 +31,16 @@
     </select>
 
     <update id="updateById">
-        UPDATE teachers SET first_name=#{teacher.firstName}, last_name=#{teacher.lastName}, subject_id=#{teacher.subjectId} WHERE id=#{id}
+        UPDATE teachers SET
+            first_name = #{teacher.firstName},
+            last_name = #{teacher.lastName},
+            subject_id = #{teacher.subjectId}
+        WHERE id = #{id}
     </update>
 
     <delete id="deleteById">
-        DELETE FROM teachers WHERE id=#{id}
+        DELETE FROM teachers
+        WHERE id = #{id}
     </delete>
 
     <resultMap id="TeacherResultMap" type="com.solvd.schedulegenerator.domain.Teacher" autoMapping="false">

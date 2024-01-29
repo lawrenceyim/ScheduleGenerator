@@ -29,7 +29,6 @@ public class AlgoTest {
 
         ScheduleGenerationService service = null;
 
-
         subjectIdMap = new HashMap<>();
         for (Subject subject : subjects) {
             subjectIdMap.put(subject.getId(), subject);
@@ -56,7 +55,6 @@ public class AlgoTest {
     }
 
     // Test data
-
     private List<StudentGroup> generateGroups() {
         List<StudentGroup> groups = new ArrayList<>();
         for (int i = 1; i <= 2; i++) {
@@ -66,7 +64,6 @@ public class AlgoTest {
         }
         return groups;
     }
-
 
     private List<Subject> generateSubjects() {
         List<Subject> subjects = new ArrayList<>();
@@ -80,7 +77,6 @@ public class AlgoTest {
         }
         return subjects;
     }
-
 
     private List<Teacher> generateTeachers() {
         List<Teacher> teachers = new ArrayList<>();
@@ -158,7 +154,6 @@ public class AlgoTest {
                 throw new RuntimeException("Subject " + subjectId + " is taught by more than one teacher");
             }
 
-
             long studentCount = classPeriod.getStudents().size();
             groupToStudentCountMap.put(groupId, studentCount);
 
@@ -218,7 +213,4 @@ public class AlgoTest {
     private boolean isLastPeriodOfDay(int timeslot) {
         return timeslot % coursesPerDay == coursesPerDay - 1;
     }
-
-
-
 }
