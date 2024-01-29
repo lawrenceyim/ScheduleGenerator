@@ -1,9 +1,7 @@
-drop database if exists schedule_generator;
-create database if not exists schedule_generator;
+DROP database IF EXISTS schedule_generator;
+CREATE database IF NOT EXISTS schedule_generator;
 
-use schedule_generator;
-
-
+USE schedule_generator;
 
 CREATE TABLE rooms (
     id serial,
@@ -20,12 +18,13 @@ CREATE TABLE subjects (
 );
 
 CREATE TABLE teachers (
-                          id serial,
-                          first_name VARCHAR(45) NOT NULL,
-                          last_name VARCHAR(45) NOT NULL,
-                          subject_id BIGINT UNSIGNED NOT NULL,
-                          FOREIGN KEY (subject_id) REFERENCES subjects(id),
-                          PRIMARY KEY (id)
+    id serial,
+    id serial,
+    first_name VARCHAR(45) NOT NULL,
+    last_name VARCHAR(45) NOT NULL,
+    subject_id BIGINT UNSIGNED NOT NULL,
+    FOREIGN KEY (subject_id) REFERENCES subjects(id),
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE student_groups (
@@ -79,32 +78,62 @@ CREATE TABLE class_periods (
 );
 
 INSERT INTO subjects(name) VALUES
-       ('Physics'),
-       ('Chemistry'),
-       ('Calculus'),
-       ('History'),
-       ('PE'),
-       ('English'),
-       ('Spanish');
-
+    ('Physics'),
+    ('Chemistry'),
+    ('Calculus'),
+    ('History'),
+    ('Physical Education'),
+    ('English'),
+    ('Spanish'),
+    ('Biology'),
+    ('Computer Science'),
+    ('Art'),
+    ('Economics'),
+    ('Geography'),
+    ('Mathematics'),
+    ('Music'),
+    ('Psychology');
 
 INSERT INTO teachers(first_name, last_name, subject_id) VALUES
     ('Ron', 'Swanson', 1),
     ('Jim', 'Peters', 2),
     ('Henry', 'Simmons', 3),
     ('Hannah', 'Thompson', 4),
-    ('Liam', 'Rodriguez', 5);
+    ('Liam', 'Rodriguez', 5),
+    ('Emma', 'Jones', 6),
+    ('Oliver', 'Williams', 7),
+    ('Ava', 'Martinez', 8),
+    ('William', 'Davis', 9),
+    ('Sophia', 'Anderson', 10),
+    ('Michael', 'Taylor', 11),
+    ('Emily', 'Brown', 12),
+    ('Daniel', 'Moore', 13),
+    ('Isabella', 'Garcia', 14),
+    ('Ethan', 'Miller', 15);
 
 INSERT INTO rooms(building, floor, room_number) VALUES
     ('Harrington Hall', 1, 100),
     ('Harrington Hall', 2, 210),
     ('Welsh Building', 1, 150),
-    ('Welsh Building', 1, 180);
-
+    ('Welsh Building', 1, 180),
+    ('Smith Center', 3, 305),
+    ('Smith Center', 2, 220),
+    ('Johnson Complex', 4, 410),
+    ('Johnson Complex', 2, 205),
+    ('Stevens Annex', 1, 120),
+    ('Stevens Annex', 3, 330),
+    ('Baker Tower', 5, 510),
+    ('Baker Tower', 4, 420),
+    ('Jones Pavilion', 2, 230),
+    ('Jones Pavilion', 3, 340),
+    ('Taylor Hall', 1, 110);
 
 INSERT INTO student_groups(id) VALUES
     (1),
-    (2);
+    (2),
+    (3),
+    (4),
+    (5);
 
 INSERT INTO students(first_name, last_name, group_id) VALUES
     ('Bob', 'Smith', 1),
@@ -112,18 +141,13 @@ INSERT INTO students(first_name, last_name, group_id) VALUES
     ('Billy', 'Joe', 1),
     ('Ava', 'Anderson', 2),
     ('Ethan', 'Martinez', 2),
-    ('Olivia', 'Walker', 2);
-
-INSERT INTO courses(teacher_id, room_id, group_id, subject_id) VALUES
-       (1, 1, 1, 1),
-       (2, 2, 1, 2),
-       (3, 3, 1, 3),
-       (4, 4, 1, 4),
-       (5, 1, 2, 5);
-
-INSERT INTO schedules(course_id, day_of_week, time_slot) VALUES
-    (1, 1, 1),
-    (1, 3, 1),
-    (2, 2, 1),
-    (2, 4, 1),
-    (3, 1, 2);
+    ('Olivia', 'Walker', 2),
+    ('Liam', 'Thomas', 3),
+    ('Emma', 'White', 3),
+    ('Noah', 'Taylor', 3),
+    ('Sophia', 'Jones', 4),
+    ('Jackson', 'Moore', 4),
+    ('Mia', 'Davis', 4),
+    ('Lucas', 'Garcia', 5),
+    ('Isabella', 'Miller', 5),
+    ('Henry', 'Brown', 5);
