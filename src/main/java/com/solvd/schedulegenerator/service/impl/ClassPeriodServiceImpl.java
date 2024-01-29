@@ -34,4 +34,13 @@ public class ClassPeriodServiceImpl implements ClassPeriodService {
             sqlSession.commit();
         }
     }
+
+    @Override
+    public void create(ClassPeriod classPeriod) {
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
+            ClassPeriodDao classPeriodDao = sqlSession.getMapper(ClassPeriodDao.class);
+            classPeriodDao.create(classPeriod.getTeacherId(), classPeriod.getRoomId(), classPeriod.getGroupId(), classPeriod.getSubjectId(), classPeriod.getTimeslot());
+            sqlSession.commit();
+        }
+    }
 }

@@ -5,8 +5,12 @@ import com.solvd.schedulegenerator.domain.Room;
 import com.solvd.schedulegenerator.domain.StudentGroup;
 import com.solvd.schedulegenerator.domain.Subject;
 import com.solvd.schedulegenerator.domain.Teacher;
+import com.solvd.schedulegenerator.persistence.ClassPeriodDao;
 import com.solvd.schedulegenerator.service.ScheduleGenerationService;
+import com.solvd.schedulegenerator.utils.MyBatisSessionFactory;
 import com.solvd.schedulegenerator.utils.Pair;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.SqlSession;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,7 +55,6 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
         this.subjectIdMap = generateSubjectIdMap();
         this.subjectsToAdd = sortSubjectsByPriority();
     }
-
 
     // Builder class
     public static class Builder {
@@ -137,6 +140,21 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
         }
         List<ClassPeriod> bestSchedule = Collections.max(population, Comparator.comparingInt(this::evaluateFitness));
         return bestSchedule;
+    }
+
+    @Override
+    public void generateAndSaveSchedule() {
+        List<ClassPeriod> schedule = generateSchedule();
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
+            ClassPeriodDao classPeriodDao = sqlSession.getMapper(ClassPeriodDao.class);
+            schedule.stream().forEach(classPeriod -> {
+                classPeriodDao.create(classPeriod.getTeacherId(),
+                        classPeriod.getRoomId(),
+                        classPeriod.getGroupId(),
+                        classPeriod.getSubjectId(),
+                        classPeriod.getTimeslot());
+            });
+        }
     }
 
     // Initializes the population for the genetic algorithm
