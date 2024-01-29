@@ -88,4 +88,9 @@ public class ClassPeriodServiceImpl implements ClassPeriodService {
             OUTPUT_LOGGER.info(sb.toString());
         }
     }
+
+    @Override
+    public void deleteAll() {
+
+    }
 }
