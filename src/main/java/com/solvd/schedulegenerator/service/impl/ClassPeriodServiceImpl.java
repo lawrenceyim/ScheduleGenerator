@@ -88,4 +88,13 @@ public class ClassPeriodServiceImpl implements ClassPeriodService {
             OUTPUT_LOGGER.info(sb.toString());
         }
     }
+
+    @Override
+    public void deleteAll() {
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
+            ClassPeriodDao classPeriodDao = sqlSession.getMapper(ClassPeriodDao.class);
+            classPeriodDao.deleteAll();
+            sqlSession.commit();
+        }
+    }
 }

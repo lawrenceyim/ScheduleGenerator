@@ -70,12 +70,16 @@ public class ConsoleMenu implements IMenu {
     public void performUserChoice(int choice) {
         switch (choice) {
             case 1:
+                // Delete old schedule
+                classPeriodService.deleteAll();
+
                 try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
                     int coursesPerDay = 5;
                     RoomDao roomDao = sqlSession.getMapper(RoomDao.class);
                     StudentGroupDao studentGroupDao = sqlSession.getMapper(StudentGroupDao.class);
                     SubjectDao subjectDao = sqlSession.getMapper(SubjectDao.class);
                     TeacherDao teacherDao = sqlSession.getMapper(TeacherDao.class);
+
                     scheduleGenerationService = new ScheduleGenerationServiceGeneticAlgo.Builder()
                             .setGroups(studentGroupDao.findAll())
                             .setSubjects(subjectDao.findAll())

@@ -16,4 +16,5 @@ public interface ClassPeriodDao extends BaseDao<ClassPeriod> {
     List<ClassPeriod> findAll();
 
     void deleteById(long id);
+    void deleteAll();
 }
