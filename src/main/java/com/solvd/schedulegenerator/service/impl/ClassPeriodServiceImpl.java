@@ -91,6 +91,10 @@ public class ClassPeriodServiceImpl implements ClassPeriodService {
 
     @Override
     public void deleteAll() {
-
+        try (SqlSession sqlSession = MyBatisSessionFactory.getSessionFactory().openSession()) {
+            ClassPeriodDao classPeriodDao = sqlSession.getMapper(ClassPeriodDao.class);
+            classPeriodDao.deleteAll();
+            sqlSession.commit();
+        }
     }
 }
