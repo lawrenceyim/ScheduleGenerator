@@ -151,6 +151,7 @@ public class ScheduleGenerationServiceGeneticAlgo implements ScheduleGenerationS
                         classPeriod.getSubjectId(),
                         classPeriod.getTimeslot());
             });
+            sqlSession.commit();
         }
     }
 
