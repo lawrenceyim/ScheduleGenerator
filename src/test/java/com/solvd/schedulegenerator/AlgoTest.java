@@ -63,7 +63,6 @@ public class AlgoTest {
         return groups;
     }
 
-
     private List<Subject> generateSubjects() {
         List<Subject> subjects = new ArrayList<>();
         String[] subjectNames = {"Physics", "Chemistry", "Calculus", "History", "PE"};
@@ -76,7 +75,6 @@ public class AlgoTest {
         }
         return subjects;
     }
-
 
     private List<Teacher> generateTeachers() {
         List<Teacher> teachers = new ArrayList<>();
