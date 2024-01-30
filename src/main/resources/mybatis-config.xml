@@ -22,6 +22,7 @@
         <mapper resource="mappers/CourseMapper.xml"/>
         <mapper resource="mappers/TeacherMapper.xml"/>
         <mapper resource="mappers/SubjectMapper.xml"/>
+        <mapper resource="mappers/SubjectConstraintMapper.xml"/>
         <mapper resource="mappers/StudentMapper.xml"/>
         <mapper resource="mappers/StudentGroupMapper.xml"/>
         <mapper resource="mappers/RoomMapper.xml"/>
