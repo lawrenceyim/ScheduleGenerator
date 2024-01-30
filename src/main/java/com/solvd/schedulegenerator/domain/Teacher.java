@@ -1,11 +1,16 @@
 package com.solvd.schedulegenerator.domain;
 
-public class Teacher {
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+public class Teacher  {
+
+    private final Logger OUTPUT_LOGGER = LogManager.getLogger(Teacher.class);
+
     private long id;
     private String firstName;
     private String lastName;
     private long subjectId;
-
 
     public Teacher() {
     }

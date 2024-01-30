@@ -1,9 +1,9 @@
 package com.solvd.schedulegenerator.menu;
 
-public interface IMenu {
+public interface IMenu <T> {
     void displayMenu();
 
-    int getUserChoice();
+    T getUserChoice();
 
-    void performUserChoice(int choice);
+    void performUserChoice(T choice);
 }
