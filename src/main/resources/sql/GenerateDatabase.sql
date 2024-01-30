@@ -27,8 +27,8 @@ CREATE TABLE teachers (
     id serial,
     first_name VARCHAR(45) NOT NULL,
     last_name VARCHAR(45) NOT NULL,
-    subject_id BIGINT UNSIGNED NOT NULL,
-    FOREIGN KEY (subject_id) REFERENCES subjects(id),
+    subject_id BIGINT UNSIGNED,
+    FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE SET NULL,
     PRIMARY KEY (id)
 );
 
@@ -78,7 +78,7 @@ CREATE TABLE class_periods (
    FOREIGN KEY (teacher_id) REFERENCES teachers(id),
    FOREIGN KEY (room_id) REFERENCES rooms(id),
    FOREIGN KEY (group_id) REFERENCES student_groups(id),
-   FOREIGN KEY (subject_id) REFERENCES subjects(id),
+   FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE,
    PRIMARY KEY (id)
 );
 

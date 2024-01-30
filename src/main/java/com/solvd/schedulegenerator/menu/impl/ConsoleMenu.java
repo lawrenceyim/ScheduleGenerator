@@ -3,7 +3,6 @@ package com.solvd.schedulegenerator.menu.impl;
 import com.solvd.schedulegenerator.domain.ClassPeriod;
 import com.solvd.schedulegenerator.domain.SubjectConstraint;
 import com.solvd.schedulegenerator.menu.IMenu;
-import com.solvd.schedulegenerator.persistence.ClassPeriodDao;
 import com.solvd.schedulegenerator.persistence.RoomDao;
 import com.solvd.schedulegenerator.persistence.StudentGroupDao;
 import com.solvd.schedulegenerator.persistence.SubjectConstraintDao;
@@ -11,14 +10,12 @@ import com.solvd.schedulegenerator.persistence.SubjectDao;
 import com.solvd.schedulegenerator.persistence.TeacherDao;
 import com.solvd.schedulegenerator.service.ClassPeriodService;
 import com.solvd.schedulegenerator.service.ScheduleGenerationService;
-import com.solvd.schedulegenerator.service.ScheduleService;
 import com.solvd.schedulegenerator.service.StudentGroupService;
 import com.solvd.schedulegenerator.service.StudentService;
 import com.solvd.schedulegenerator.service.SubjectService;
 import com.solvd.schedulegenerator.service.TeacherService;
 import com.solvd.schedulegenerator.service.impl.ClassPeriodServiceImpl;
 import com.solvd.schedulegenerator.service.impl.ScheduleGenerationServiceGeneticAlgo;
-import com.solvd.schedulegenerator.service.impl.ScheduleServiceImpl;
 import com.solvd.schedulegenerator.service.impl.StudentGroupServiceImpl;
 import com.solvd.schedulegenerator.service.impl.StudentServiceImpl;
 import com.solvd.schedulegenerator.service.impl.SubjectServiceImpl;
@@ -26,20 +23,23 @@ import com.solvd.schedulegenerator.service.impl.TeacherServiceImpl;
 import com.solvd.schedulegenerator.utils.MyBatisSessionFactory;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.Logger;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-public class ConsoleMenu implements IMenu {
+public class ConsoleMenu implements IMenu<Integer> {
 
+
+    private final IMenu newSubjectMenu = new NewSubjectMenu();
+    private final IMenu subjectDeleteMenu = new SubjectDeleteMenu();
     private final ClassPeriodService classPeriodService = new ClassPeriodServiceImpl();
     private final StudentGroupService studentGroupService = new StudentGroupServiceImpl();
     private final StudentService studentService = new StudentServiceImpl();
     private final SubjectService subjectService = new SubjectServiceImpl();
     private final TeacherService teacherService = new TeacherServiceImpl();
-    private final Logger OUTPUT_LOGGER = (Logger) LogManager.getLogger("Output");
+    private final Logger OUTPUT_LOGGER = LogManager.getLogger(ConsoleMenu.class);
     private final Scanner scanner = new Scanner(System.in);
     private ScheduleGenerationService scheduleGenerationService;
 
@@ -53,14 +53,16 @@ public class ConsoleMenu implements IMenu {
         OUTPUT_LOGGER.info("4. View students");
         OUTPUT_LOGGER.info("5. View subjects");
         OUTPUT_LOGGER.info("6. View teachers");
-        OUTPUT_LOGGER.info("7. Exit");
+        OUTPUT_LOGGER.info("7. Add subject");
+        OUTPUT_LOGGER.info("8. Delete subject");
+        OUTPUT_LOGGER.info("9. Exit");
     }
 
     @Override
-    public int getUserChoice() {
+    public Integer getUserChoice() {
         try {
             int choice = scanner.nextInt();
-            if (choice >= 1 && choice <= 7) {
+            if (choice >= 1 && choice <= 9) {
                 return choice;
             }
         } catch (InputMismatchException e) {
@@ -70,7 +72,7 @@ public class ConsoleMenu implements IMenu {
     }
 
     @Override
-    public void performUserChoice(int choice) {
+    public void performUserChoice(Integer choice) {
         switch (choice) {
             case 1:
                 // Delete old schedule
@@ -117,6 +119,16 @@ public class ConsoleMenu implements IMenu {
                 teacherService.displayAllTeachers();
                 return;
             case 7:
+                newSubjectMenu.displayMenu();
+                String studentName = (String) newSubjectMenu.getUserChoice();
+                newSubjectMenu.performUserChoice(studentName);
+                return;
+            case 8:
+                subjectDeleteMenu.displayMenu();
+                Long subjectId = (Long) subjectDeleteMenu.getUserChoice();
+                subjectDeleteMenu.performUserChoice(subjectId);
+                return;
+            case 9:
                 System.exit(0);
                 return;
             default:
